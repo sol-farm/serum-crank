@@ -1,8 +1,7 @@
 #! /bin/bash
 
 /usr/local/bin/crank \
-    --url "$RPC_URL" \ 
-    consume-events \
+    --url "$RPC_URL" consume-events \
     --coin-wallet "$COINWALLET" \
     --pc-wallet "$PCWALLET" \
     -d 9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin \
