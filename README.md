@@ -1,6 +1,7 @@
 # serum-crank
 
 Docker image for serum crank using maximal rust compiler optimizations. See [serum's licese file](https://github.com/project-serum/serum-dex/blob/v0.4.0/LICENSE) for the license of the source code. 
+
 # Docker Image
 
 A docker image that allows running the crank service through a docker container. Image is designed to be used with docker buildkit to enable as much caching as possible to reduce build times.  For those wishing to crank multiple markets at once, a docker compose file may be used.
@@ -21,6 +22,7 @@ Docker image will be available locally as `serum-crank:latest` or as a gzip comp
 ## Configuration
 
 * `NUMWORKERS` - defines the maximum workers for a crank
+* `LOGDIRECTORY` - defines the file to store logs in, not the actual directory
 
 ## Docker Compose
 
