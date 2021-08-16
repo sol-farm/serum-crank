@@ -1,0 +1,15 @@
+version: "3.5"
+services:
+  tulip:
+    image: serum-crank:latest
+    environment:
+      COINWALLET: "DUMMY"
+      PCWALLET: "DUMMY"
+      EVENTSPERWORKER: 5
+      LOGDIR: /logdir
+      MARKET: "8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW"
+      NUMACCOUNTS: 5
+      NUMWORKERS: 1
+    volumes:
+      - ./payer.json:/tmp/payer.json
+      - ./tulip_crank_logs:/logdir

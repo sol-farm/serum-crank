@@ -1,0 +1,15 @@
+# liquidator specific
+target
+serum_crank.tar
+serum_crank.tar.gz
+Makefile
+README.md
+
+# regexs
+**/*.txt
+**/yarn.lock
+**/LICENSE
+**/*.travis.yaml
+**/Anchor.toml
+**/*.md
+**/target

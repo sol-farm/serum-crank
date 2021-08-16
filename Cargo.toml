@@ -1,0 +1,37 @@
+[package]
+name = "crank"
+version = "0.2.0"
+edition = "2018"
+
+[[bin]]
+name = "crank"
+path = "src/bin/main.rs"
+
+[dependencies]
+# 1be91f2863d8ecede32daaae7e768034e24bbc79 == v0.4.0 commit
+serum_dex = { git = "https://github.com/project-serum/serum-dex.git", rev = "1be91f2863d8ecede32daaae7e768034e24bbc79", default-features = false, features = ["client"] }
+serum-common = { git = "https://github.com/project-serum/serum-dex.git", rev ="1be91f2863d8ecede32daaae7e768034e24bbc79", features = ["client"] }
+spl-token = { version = "3.0.0-pre1", features = ["no-entrypoint"], default-features = false }
+clap = "3.0.0-beta.1"
+enumflags2 = "0.6.4"
+solana-client = "1.6.18"
+solana-sdk = "1.6.18"
+anyhow = "1.0.32"
+rand = "0.7.3"
+safe-transmute = "0.11.0"
+threadpool = "1.8.1"
+sloggers = "1.0"
+slog-scope = "4.3"
+slog-stdlog = "4"
+log = "0.4"
+debug_print = "1.0.0"
+tokio = {version = "0.2", features = ["full"]}
+warp = "0.2"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+[profile.release.build-override]
+opt-level = 3
+incremental = false
+codegen-units = 1
