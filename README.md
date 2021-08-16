@@ -5,6 +5,7 @@ Docker image for serum crank using maximal rust compiler optimizations. See [ser
 # Differences From Upstream
 
 * Specifies `--url` as the RPC to connect to instead of network which ends up using public rpc infra
+* Forces global allocator to use jemalloc
 
 # Docker Image
 

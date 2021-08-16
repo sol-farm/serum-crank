@@ -13,4 +13,3 @@ services:
       RPC_URL: "https://solana-api.projectserum.com"
     volumes:
       - ./payer.json:/tmp/payer.json
-      - ./tulip_crank_logs:/logdir

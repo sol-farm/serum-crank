@@ -4,6 +4,7 @@ serum_crank.tar
 serum_crank.tar.gz
 Makefile
 README.md
+my-crank.log
 
 # regexs
 **/*.txt
