@@ -65,15 +65,15 @@ fn read_keypair_file(s: &str) -> Result<Keypair> {
 
 #[derive(Clap, Debug)]
 pub struct Opts {
-    #[clap(default_value = "mainnet")]
-    pub cluster: Cluster,
+    #[clap(short, long, default_value = "https://solana-api.projectserum.com")]
+    pub url: String,
     #[clap(subcommand)]
     pub command: Command,
 }
 
 impl Opts {
     fn client(&self) -> RpcClient {
-        RpcClient::new(self.cluster.url().to_string())
+        RpcClient::new(self.url.to_string())
     }
 }
 

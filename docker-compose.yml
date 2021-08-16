@@ -10,6 +10,7 @@ services:
       MARKET: "8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW"
       NUMACCOUNTS: 5
       NUMWORKERS: 1
+      RPC_URL: "https://solana-api.projectserum.com"
     volumes:
       - ./payer.json:/tmp/payer.json
       - ./tulip_crank_logs:/logdir

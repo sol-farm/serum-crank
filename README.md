@@ -2,6 +2,10 @@
 
 Docker image for serum crank using maximal rust compiler optimizations. See [serum's licese file](https://github.com/project-serum/serum-dex/blob/v0.4.0/LICENSE) for the license of the source code. 
 
+# Differences From Upstream
+
+* Specifies `--url` as the RPC to connect to instead of network which ends up using public rpc infra
+
 # Docker Image
 
 A docker image that allows running the crank service through a docker container. Image is designed to be used with docker buildkit to enable as much caching as possible to reduce build times.  For those wishing to crank multiple markets at once, a docker compose file may be used.
