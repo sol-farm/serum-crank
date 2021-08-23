@@ -1,0 +1,191 @@
+Aug 22 19:59:43.512 INFO Getting market keys ..., module: crank:311
+Aug 22 19:59:46.336 INFO MarketPubkeys {
+    market: 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW,
+    req_q: DAntkL9MxXEKad58DMmDsjwPgztFmkgPeucuNCCjUBb1,
+    event_q: ExbLY71YpFaAGKuHjJKXSsWLA8hf1hGLoUYHNtzvbpGJ,
+    bids: 69W6zLetZ7FgXPXgHRp4i4wNd422tXeZzDuBzdkjgoBW,
+    asks: 42RcphsKYsVWDhaqJRETmx74RHXtHJDjZLFeeDrEL2F9,
+    coin_vault: 6qH3FNTSGKw34SEEj7GXbQ6kMQXHwuyGsAAeV5hLPhJc,
+    pc_vault: 6AdJbeH76BBSJ34DeQ6LLdauF6W8fZRrMKEfLt3YcMcT,
+    vault_signer_key: 5uJEd4wfVH84HyFEBf5chfJMTTPHBddXi1S7GmBE6x14,
+}, module: crank:314
+Aug 22 20:02:50.202 INFO Getting market keys ..., module: crank:311
+Aug 22 20:02:50.752 INFO MarketPubkeys {
+    market: 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW,
+    req_q: DAntkL9MxXEKad58DMmDsjwPgztFmkgPeucuNCCjUBb1,
+    event_q: ExbLY71YpFaAGKuHjJKXSsWLA8hf1hGLoUYHNtzvbpGJ,
+    bids: 69W6zLetZ7FgXPXgHRp4i4wNd422tXeZzDuBzdkjgoBW,
+    asks: 42RcphsKYsVWDhaqJRETmx74RHXtHJDjZLFeeDrEL2F9,
+    coin_vault: 6qH3FNTSGKw34SEEj7GXbQ6kMQXHwuyGsAAeV5hLPhJc,
+    pc_vault: 6AdJbeH76BBSJ34DeQ6LLdauF6W8fZRrMKEfLt3YcMcT,
+    vault_signer_key: 5uJEd4wfVH84HyFEBf5chfJMTTPHBddXi1S7GmBE6x14,
+}, module: crank:314
+Aug 22 20:02:52.493 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:02:52.493 INFO Total event queue length: 6, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:373
+Aug 22 20:02:52.493 INFO Number of unique order accounts: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:386
+Aug 22 20:02:52.494 INFO First 5 accounts: [3297932972331208619], module: crank:393
+Aug 22 20:02:52.494 INFO Fetching 6 events from the queue took 741, module: crank:419
+Aug 22 20:02:53.008 INFO Consuming events ..., module: crank:522
+Aug 22 20:02:53.415 INFO [thread 0] Successfully consumed events after 919.121213ms: 2BtAttLjPNK5DoD2Jqhz5TzeMWty9LEZh719NJ3mcdWznWPb1X7FMUfYs7YeZnp3YXUjT8TpZ1gxmdTBoVWrnKdg., module: crank:478
+Aug 22 20:02:53.415 INFO Total loop time took 1663, module: crank:447
+Aug 22 20:02:54.974 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916605, Max seen slot: 92916605, module: crank:331
+Aug 22 20:02:56.553 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916596, Max seen slot: 92916605, module: crank:331
+Aug 22 20:02:58.245 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916603, Max seen slot: 92916605, module: crank:331
+Aug 22 20:02:59.793 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916603, Max seen slot: 92916605, module: crank:331
+Aug 22 20:03:01.585 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:01.586 INFO Total event queue length: 10, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:373
+Aug 22 20:03:01.586 INFO Number of unique order accounts: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:386
+Aug 22 20:03:01.586 INFO First 5 accounts: [3297932972331208619], module: crank:393
+Aug 22 20:03:01.586 INFO Fetching 10 events from the queue took 792, module: crank:419
+Aug 22 20:03:02.295 INFO Consuming events ..., module: crank:522
+Aug 22 20:03:02.567 INFO [thread 0] Successfully consumed events after 979.685141ms: 3odVYBJ5w5TwycDrjQK22R1cPGbm7sSqWJpx5BembE6gPFP2UHeZks1fgGnaq2VSQ3cwDCBjLvieibzjiixixmev., module: crank:478
+Aug 22 20:03:02.568 INFO Total loop time took 1775, module: crank:447
+Aug 22 20:03:04.169 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916601, Max seen slot: 92916611, module: crank:331
+Aug 22 20:03:05.573 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916601, Max seen slot: 92916611, module: crank:331
+Aug 22 20:03:07.104 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916605, Max seen slot: 92916611, module: crank:331
+Aug 22 20:03:09.594 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:11.642 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:15.021 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:16.457 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916605, Max seen slot: 92916611, module: crank:331
+Aug 22 20:03:17.964 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916605, Max seen slot: 92916611, module: crank:331
+Aug 22 20:03:19.712 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:19.712 INFO Total event queue length: 12, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:373
+Aug 22 20:03:19.712 INFO Number of unique order accounts: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:386
+Aug 22 20:03:19.712 INFO First 5 accounts: [3297932972331208619], module: crank:393
+Aug 22 20:03:19.712 INFO Fetching 12 events from the queue took 747, module: crank:419
+Aug 22 20:03:20.653 INFO Consuming events ..., module: crank:522
+Aug 22 20:03:22.109 INFO [thread 0] Successfully consumed events after 2.395158157s: 5ttZjedWYHt6z6LxvxKauSkst6Yb78Joi7WLpdaChqtepLPR34VxHCjyWYgkX14rgPsosJxP6U7B7JU1iPSbTcB2., module: crank:478
+Aug 22 20:03:22.110 INFO Total loop time took 3145, module: crank:447
+Aug 22 20:03:23.832 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916605, Max seen slot: 92916691, module: crank:331
+Aug 22 20:03:25.264 INFO Skipping crank. Already cranked for slot. Event queue slot: 92626386, Max seen slot: 92916691, module: crank:331
+Aug 22 20:03:27.136 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:27.136 INFO Total event queue length: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:373
+Aug 22 20:03:27.136 INFO Number of unique order accounts: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:386
+Aug 22 20:03:27.136 INFO First 5 accounts: [6316613602174617701], module: crank:393
+Aug 22 20:03:27.136 INFO Fetching 1 events from the queue took 872, module: crank:419
+Aug 22 20:03:27.903 INFO Consuming events ..., module: crank:522
+Aug 22 20:03:28.161 INFO [thread 0] Successfully consumed events after 1.024487746s: 5Wfevf8ZnykQVJEucn7wx7L5ZFxpzS1QzkvykcsVV2H3T2F3CTSXkXg9hC15UUF5fsYuvuQXLMt6iVWcKgzvBim9., module: crank:478
+Aug 22 20:03:28.162 INFO Total loop time took 1897, module: crank:447
+Aug 22 20:03:29.702 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916601, Max seen slot: 92916706, module: crank:331
+Aug 22 20:03:31.218 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916622, Max seen slot: 92916706, module: crank:331
+Aug 22 20:03:33.146 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:34.674 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916601, Max seen slot: 92916706, module: crank:331
+Aug 22 20:03:36.183 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916605, Max seen slot: 92916706, module: crank:331
+Aug 22 20:03:38.164 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:38.164 INFO Total event queue length: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:373
+Aug 22 20:03:38.164 INFO Number of unique order accounts: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:386
+Aug 22 20:03:38.164 INFO First 5 accounts: [6316613602174617701], module: crank:393
+Aug 22 20:03:38.164 INFO Fetching 1 events from the queue took 981, module: crank:419
+Aug 22 20:03:38.881 INFO Consuming events ..., module: crank:522
+Aug 22 20:03:39.261 INFO [thread 0] Successfully consumed events after 1.095340091s: 4jKomAyzcEH24eNfV1omDpcUH3ZN7vNhi7vKN4LSYdcvi2c637aE1f8yuQrjFpwUSuV3hdFDJCmHAsMFXx8jMrhp., module: crank:478
+Aug 22 20:03:39.262 INFO Total loop time took 2079, module: crank:447
+Aug 22 20:03:41.131 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:43.184 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:44.927 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916702, Max seen slot: 92916708, module: crank:331
+Aug 22 20:03:46.668 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:48.609 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:50.143 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916702, Max seen slot: 92916708, module: crank:331
+Aug 22 20:03:51.641 INFO Skipping crank. Already cranked for slot. Event queue slot: 92626386, Max seen slot: 92916708, module: crank:331
+Aug 22 20:03:53.832 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:55.860 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:57.432 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:03:58.819 INFO Skipping crank. Already cranked for slot. Event queue slot: 92626386, Max seen slot: 92916708, module: crank:331
+Aug 22 20:04:00.543 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:03.446 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:05.485 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:07.622 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:09.028 INFO Skipping crank. Already cranked for slot. Event queue slot: 92626386, Max seen slot: 92916708, module: crank:331
+Aug 22 20:04:11.336 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:13.162 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:14.928 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:16.681 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:18.817 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:18.817 INFO Total event queue length: 2, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:373
+Aug 22 20:04:18.822 INFO Number of unique order accounts: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:386
+Aug 22 20:04:18.822 INFO First 5 accounts: [11284759293402717712], module: crank:393
+Aug 22 20:04:18.822 INFO Fetching 2 events from the queue took 1135, module: crank:419
+Aug 22 20:04:19.489 INFO Consuming events ..., module: crank:522
+Aug 22 20:04:19.697 INFO [thread 0] Successfully consumed events after 878.778914ms: 2bK2f2JCQShqJnP3VvrnzWaKAbY3FRqcjRy682h7BeKHwuEfBRuYgqaP7Je4eyE6Lao9r2EuzQhGTbUTRAkMcaGn., module: crank:478
+Aug 22 20:04:19.698 INFO Total loop time took 2017, module: crank:447
+Aug 22 20:04:21.474 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:21.474 INFO Total event queue length: 2, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:373
+Aug 22 20:04:21.474 INFO Number of unique order accounts: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:386
+Aug 22 20:04:21.474 INFO First 5 accounts: [11284759293402717712], module: crank:393
+Aug 22 20:04:21.474 INFO Fetching 2 events from the queue took 775, module: crank:419
+Aug 22 20:04:22.006 INFO Consuming events ..., module: crank:522
+Aug 22 20:04:22.227 INFO [thread 0] Successfully consumed events after 750.706865ms: 36cfVH9JesEJSysRgPpVoHmDm92qYXsmhUxrRoGC7yT6BzordW5gC2hTYMNBPeyXSkZHk1EzvVrxKLswvaKZeiik., module: crank:478
+Aug 22 20:04:22.227 INFO Total loop time took 1529, module: crank:447
+Aug 22 20:04:24.027 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:25.439 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916758, Max seen slot: 92916764, module: crank:331
+Aug 22 20:04:27.600 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:29.750 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:29.750 INFO Total event queue length: 5, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:373
+Aug 22 20:04:29.750 INFO Number of unique order accounts: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:386
+Aug 22 20:04:29.750 INFO First 5 accounts: [3297932972331208619], module: crank:393
+Aug 22 20:04:29.750 INFO Fetching 5 events from the queue took 1150, module: crank:419
+Aug 22 20:04:30.320 INFO Consuming events ..., module: crank:522
+Aug 22 20:04:30.900 INFO [thread 0] Successfully consumed events after 1.148546481s: 643ejMkYXMMfoaignqX1MMabxRAxc4H9fmMFQMUe3ZLLoCC5ZJPLx1NrSunrYYjARUonnKWAUQYgfx5vdMP4cr4L., module: crank:478
+Aug 22 20:04:30.901 INFO Total loop time took 2301, module: crank:447
+Aug 22 20:04:32.928 INFO Skipping crank. Already cranked for slot. Event queue slot: 92626386, Max seen slot: 92916774, module: crank:331
+Aug 22 20:04:34.565 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916760, Max seen slot: 92916774, module: crank:331
+Aug 22 20:04:36.324 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916763, Max seen slot: 92916774, module: crank:331
+Aug 22 20:04:38.266 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916763, Max seen slot: 92916774, module: crank:331
+Aug 22 20:04:40.014 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:41.451 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916758, Max seen slot: 92916774, module: crank:331
+Aug 22 20:04:43.521 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:45.034 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916761, Max seen slot: 92916774, module: crank:331
+Aug 22 20:04:47.259 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:48.874 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:50.257 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916760, Max seen slot: 92916774, module: crank:331
+Aug 22 20:04:51.632 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916763, Max seen slot: 92916774, module: crank:331
+Aug 22 20:04:53.278 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:55.582 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:04:58.157 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:00.084 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:01.466 INFO Skipping crank. Already cranked for slot. Event queue slot: 92626386, Max seen slot: 92916774, module: crank:331
+Aug 22 20:05:03.695 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:05.156 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916758, Max seen slot: 92916774, module: crank:331
+Aug 22 20:05:06.946 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:08.641 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:10.320 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:12.164 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:14.115 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:16.570 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:18.344 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:20.360 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:22.500 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:24.075 INFO Skipping crank. Already cranked for slot. Event queue slot: 92626386, Max seen slot: 92916774, module: crank:331
+Aug 22 20:05:25.787 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:27.542 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:30.088 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:32.034 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:33.657 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:35.614 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:37.770 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:40.537 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:42.416 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:43.806 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916760, Max seen slot: 92916774, module: crank:331
+Aug 22 20:05:46.116 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:47.847 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:50.266 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:50.267 INFO Total event queue length: 2, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:373
+Aug 22 20:05:50.267 INFO Number of unique order accounts: 1, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:386
+Aug 22 20:05:50.267 INFO First 5 accounts: [10494282572836102747], module: crank:393
+Aug 22 20:05:50.267 INFO Fetching 2 events from the queue took 1419, module: crank:419
+Aug 22 20:05:51.399 INFO Consuming events ..., module: crank:522
+Aug 22 20:05:51.797 INFO [thread 0] Successfully consumed events after 1.528884165s: KXTL1eAUpjenta47UtkqQHfUDfU5sDTrHoYTqWUTi2WKcLUYS6XxDqeJ36b5SR4Zi9SzsNT8g12u25N257beW4a., module: crank:478
+Aug 22 20:05:51.798 INFO Total loop time took 2950, module: crank:447
+Aug 22 20:05:53.335 INFO Skipping crank. Already cranked for slot. Event queue slot: 92626386, Max seen slot: 92916954, module: crank:331
+Aug 22 20:05:55.484 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:05:57.186 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916757, Max seen slot: 92916954, module: crank:331
+Aug 22 20:05:59.068 INFO Skipping crank. Already cranked for slot. Event queue slot: 92626386, Max seen slot: 92916954, module: crank:331
+Aug 22 20:06:00.991 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:06:02.675 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:06:04.295 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:06:05.827 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916870, Max seen slot: 92916954, module: crank:331
+Aug 22 20:06:07.214 INFO Skipping crank. Already cranked for slot. Event queue slot: 92916758, Max seen slot: 92916954, module: crank:331
+Aug 22 20:06:09.717 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:06:13.301 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:06:14.878 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:06:16.462 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353
+Aug 22 20:06:18.560 INFO Size of request queue is 0, market 8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW, coin 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, pc 9UJ1AYv6rko5xu4Z7DnA5hLaNZFxDu9BxqKp1LULivqC, module: crank:353

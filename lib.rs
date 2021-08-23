@@ -27,14 +27,12 @@ use solana_client::rpc_client::RpcClient;
 use solana_client::rpc_config::RpcSendTransactionConfig;
 use solana_sdk::commitment_config::CommitmentConfig;
 use solana_sdk::instruction::{AccountMeta, Instruction};
-use solana_sdk::program_pack::Pack;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::Signature;
 use solana_sdk::signature::{Keypair, Signer};
 use solana_sdk::transaction::Transaction;
-use spl_token::instruction as token_instruction;
 use warp::Filter;
-
+pub mod config;
 use serum_common::client::rpc::{
     send_txn, simulate_transaction,
 };
@@ -49,9 +47,9 @@ use serum_dex::state::gen_vault_signer_key;
 use serum_dex::state::Event;
 use serum_dex::state::EventQueueHeader;
 use serum_dex::state::QueueHeader;
-use serum_dex::state::Request;
-use serum_dex::state::RequestQueueHeader;
 use serum_dex::state::{AccountFlag, Market, MarketState, MarketStateV2};
+
+pub mod crank;
 
 pub fn with_logging<F: FnOnce()>(_to: &str, fnc: F) {
     fnc();
@@ -102,23 +100,13 @@ pub enum Command {
         #[clap(long)]
         max_wait_for_events_delay: Option<u64>,
     },
-    MonitorQueue {
-        #[clap(long, short)]
-        dex_program_id: Pubkey,
-
-        #[clap(long, short)]
-        market: Pubkey,
-
-        #[clap(long)]
-        port: u16,
-    },
     PrintEventQueue {
         dex_program_id: Pubkey,
         market: Pubkey,
     },
 }
 
-pub fn start(opts: Opts) -> Result<()> {
+pub async fn start(opts: Opts) -> Result<()> {
     let client = opts.client();
 
     match opts.command {
@@ -150,20 +138,6 @@ pub fn start(opts: Opts) -> Result<()> {
                 max_wait_for_events_delay.unwrap_or(60),
             )?;
         }
-        Command::MonitorQueue {
-            dex_program_id,
-            market,
-            port,
-        } => {
-            let client = opts.client();
-            let mut runtime = tokio::runtime::Builder::new()
-                .basic_scheduler()
-                .build()
-                .unwrap();
-            runtime
-                .block_on(read_queue_length_loop(client, dex_program_id, market, port))
-                .unwrap();
-        }
         Command::PrintEventQueue {
             ref dex_program_id,
             ref market,
@@ -172,9 +146,9 @@ pub fn start(opts: Opts) -> Result<()> {
             let event_q_data = client.get_account_data(&market_keys.event_q)?;
             let inner: Cow<[u64]> = remove_dex_account_padding(&event_q_data)?;
             let (header, events_seg0, events_seg1) = parse_event_queue(&inner)?;
-            debug_println!("Header:\n{:#x?}", header);
-            debug_println!("Seg0:\n{:#x?}", events_seg0);
-            debug_println!("Seg1:\n{:#x?}", events_seg1);
+            println!("Header:\n{:#x?}", header);
+            println!("Seg0:\n{:#x?}", events_seg0);
+            println!("Seg1:\n{:#x?}", events_seg1);
         }
     }
     Ok(())
@@ -278,19 +252,6 @@ fn parse_event_queue(data_words: &[u64]) -> Result<(EventQueueHeader, &[Event], 
     let events: &[Event] = transmute_many::<_, SingleManyGuard>(transmute_to_bytes(event_words))
         .map_err(|e| e.without_src())?;
     let (tail_seg, head_seg) = events.split_at(header.head() as usize);
-    let head_len = head_seg.len().min(header.count() as usize);
-    let tail_len = header.count() as usize - head_len;
-    Ok((header, &head_seg[..head_len], &tail_seg[..tail_len]))
-}
-
-fn parse_req_queue(data_words: &[u64]) -> Result<(RequestQueueHeader, &[Request], &[Request])> {
-    let (header_words, request_words) = data_words.split_at(size_of::<RequestQueueHeader>() >> 3);
-    let header: RequestQueueHeader =
-        transmute_one_pedantic(transmute_to_bytes(header_words)).map_err(|e| e.without_src())?;
-    let request: &[Request] =
-        transmute_many::<_, SingleManyGuard>(transmute_to_bytes(request_words))
-            .map_err(|e| e.without_src())?;
-    let (tail_seg, head_seg) = request.split_at(header.head() as usize);
     let head_len = head_seg.len().min(header.count() as usize);
     let tail_len = header.count() as usize - head_len;
     Ok((header, &head_seg[..head_len], &tail_seg[..tail_len]))
@@ -792,72 +753,6 @@ pub fn place_order(
     Ok(())
 }
 
-fn settle_funds(
-    client: &RpcClient,
-    program_id: &Pubkey,
-    payer: &Keypair,
-    state: &MarketPubkeys,
-    signer: Option<&Keypair>,
-    orders: &Pubkey,
-    coin_wallet: &Pubkey,
-    pc_wallet: &Pubkey,
-) -> Result<()> {
-    let data = MarketInstruction::SettleFunds.pack();
-    let instruction = Instruction {
-        program_id: *program_id,
-        data,
-        accounts: vec![
-            AccountMeta::new(*state.market, false),
-            AccountMeta::new(*orders, false),
-            AccountMeta::new_readonly(signer.unwrap_or(payer).pubkey(), true),
-            AccountMeta::new(*state.coin_vault, false),
-            AccountMeta::new(*state.pc_vault, false),
-            AccountMeta::new(*coin_wallet, false),
-            AccountMeta::new(*pc_wallet, false),
-            AccountMeta::new_readonly(*state.vault_signer_key, false),
-            AccountMeta::new_readonly(spl_token::ID, false),
-        ],
-    };
-    let (recent_hash, _fee_calc) = client.get_recent_blockhash()?;
-    let mut signers = vec![payer];
-    if let Some(s) = signer {
-        signers.push(s);
-    }
-    let txn = Transaction::new_signed_with_payer(
-        &[instruction],
-        Some(&payer.pubkey()),
-        &signers,
-        recent_hash,
-    );
-    let mut i = 0;
-    loop {
-        i += 1;
-        assert!(i < 10);
-        debug_println!("Simulating SettleFunds instruction ...");
-        let result = simulate_transaction(client, &txn, true, CommitmentConfig::single())?;
-        if let Some(e) = result.value.err {
-            return Err(format_err!("simulate_transaction error: {:?}", e));
-        }
-        debug_println!("{:#?}", result.value);
-        if result.value.err.is_none() {
-            break;
-        }
-    }
-    debug_println!("Settling ...");
-    send_txn(client, &txn, false)?;
-    Ok(())
-}
-
-struct ListingKeys {
-    market_key: Keypair,
-    req_q_key: Keypair,
-    event_q_key: Keypair,
-    bids_key: Keypair,
-    asks_key: Keypair,
-    vault_signer_pk: Pubkey,
-    vault_signer_nonce: u64,
-}
-
 fn create_dex_account(
     client: &RpcClient,
     program_id: &Pubkey,
@@ -874,136 +769,4 @@ fn create_dex_account(
         program_id,
     );
     Ok((key, create_account_instr))
-}
-
-fn create_account(
-    client: &RpcClient,
-    mint_pubkey: &Pubkey,
-    owner_pubkey: &Pubkey,
-    payer: &Keypair,
-) -> Result<Keypair> {
-    let spl_account = Keypair::generate(&mut OsRng);
-    let signers = vec![payer, &spl_account];
-
-    let lamports = client.get_minimum_balance_for_rent_exemption(spl_token::state::Account::LEN)?;
-
-    let create_account_instr = solana_sdk::system_instruction::create_account(
-        &payer.pubkey(),
-        &spl_account.pubkey(),
-        lamports,
-        spl_token::state::Account::LEN as u64,
-        &spl_token::ID,
-    );
-
-    let init_account_instr = token_instruction::initialize_account(
-        &spl_token::ID,
-        &spl_account.pubkey(),
-        &mint_pubkey,
-        &owner_pubkey,
-    )?;
-
-    let instructions = vec![create_account_instr, init_account_instr];
-
-    let (recent_hash, _fee_calc) = client.get_recent_blockhash()?;
-
-    let txn = Transaction::new_signed_with_payer(
-        &instructions,
-        Some(&payer.pubkey()),
-        &signers,
-        recent_hash,
-    );
-
-    debug_println!("Creating account: {} ...", spl_account.pubkey());
-    send_txn(client, &txn, false)?;
-    Ok(spl_account)
-}
-
-fn mint_to_existing_account(
-    client: &RpcClient,
-    payer: &Keypair,
-    minting_key: &Keypair,
-    mint: &Pubkey,
-    recipient: &Pubkey,
-    quantity: u64,
-) -> Result<()> {
-    let signers = vec![payer, minting_key];
-
-    let mint_tokens_instr = token_instruction::mint_to(
-        &spl_token::ID,
-        mint,
-        recipient,
-        &minting_key.pubkey(),
-        &[],
-        quantity,
-    )?;
-
-    let instructions = vec![mint_tokens_instr];
-    let (recent_hash, _fee_calc) = client.get_recent_blockhash()?;
-    let txn = Transaction::new_signed_with_payer(
-        &instructions,
-        Some(&payer.pubkey()),
-        &signers,
-        recent_hash,
-    );
-    send_txn(client, &txn, false)?;
-    Ok(())
-}
-
-fn initialize_token_account(client: &RpcClient, mint: &Pubkey, owner: &Keypair) -> Result<Keypair> {
-    let recip_keypair = Keypair::generate(&mut OsRng);
-    let lamports = client.get_minimum_balance_for_rent_exemption(spl_token::state::Account::LEN)?;
-    let create_recip_instr = solana_sdk::system_instruction::create_account(
-        &owner.pubkey(),
-        &recip_keypair.pubkey(),
-        lamports,
-        spl_token::state::Account::LEN as u64,
-        &spl_token::ID,
-    );
-    let init_recip_instr = token_instruction::initialize_account(
-        &spl_token::ID,
-        &recip_keypair.pubkey(),
-        mint,
-        &owner.pubkey(),
-    )?;
-    let signers = vec![owner, &recip_keypair];
-    let instructions = vec![create_recip_instr, init_recip_instr];
-    let (recent_hash, _fee_calc) = client.get_recent_blockhash()?;
-    let txn = Transaction::new_signed_with_payer(
-        &instructions,
-        Some(&owner.pubkey()),
-        &signers,
-        recent_hash,
-    );
-    send_txn(client, &txn, false)?;
-    Ok(recip_keypair)
-}
-
-enum MonitorEvent {
-    NumEvents(usize),
-    NewConn(std::net::TcpStream),
-}
-
-async fn read_queue_length_loop(
-    client: RpcClient,
-    program_id: Pubkey,
-    market: Pubkey,
-    port: u16,
-) -> Result<()> {
-    let client = Arc::new(client);
-    let get_data = warp::path("length").map(move || {
-        let client = client.clone();
-        let market_keys = get_keys_for_market(&client, &program_id, &market).unwrap();
-        let event_q_data = client
-            .get_account_with_commitment(&market_keys.event_q, CommitmentConfig::recent())
-            .unwrap()
-            .value
-            .expect("Failed to retrieve account")
-            .data;
-        let inner: Cow<[u64]> = remove_dex_account_padding(&event_q_data).unwrap();
-        let (_header, seg0, seg1) = parse_event_queue(&inner).unwrap();
-        let len = seg0.len() + seg1.len();
-        format!("{{ \"length\": {}  }}", len)
-    });
-
-    Ok(warp::serve(get_data).run(([127, 0, 0, 1], port)).await)
 }

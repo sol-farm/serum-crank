@@ -5,18 +5,18 @@ edition = "2018"
 
 [[bin]]
 name = "crank"
-path = "src/bin/main.rs"
+path = "src/main.rs"
 
 [dependencies]
 # 1be91f2863d8ecede32daaae7e768034e24bbc79 == v0.4.0 commit
 serum_dex = { git = "https://github.com/project-serum/serum-dex.git", rev = "1be91f2863d8ecede32daaae7e768034e24bbc79", default-features = false, features = ["client"] }
 serum-common = { git = "https://github.com/project-serum/serum-dex.git", rev ="1be91f2863d8ecede32daaae7e768034e24bbc79", features = ["client"] }
 spl-token = { version = "3.0.0-pre1", features = ["no-entrypoint"], default-features = false }
-clap = "3.0.0-beta.1"
+clap = "2.33.3"
 enumflags2 = "0.6.4"
 solana-client = "1.6.18"
 solana-sdk = "1.6.18"
-anyhow = "1.0.32"
+anyhow = "1.0.43"
 rand = "0.7.3"
 safe-transmute = "0.11.0"
 threadpool = "1.8.1"
@@ -25,10 +25,13 @@ slog-scope = "4.3"
 slog-stdlog = "4"
 log = "0.4"
 debug_print = "1.0.0"
-tokio = {version = "0.2", features = ["full"]}
+tokio = { version = "1.8.0", features = ["rt-multi-thread"] }
 warp = "0.2"
 jemallocator = "0.3.2"
-
+serde_json = "1.0.64"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
+simplelog = "0.10.0"
 [profile.release]
 lto = "fat"
 codegen-units = 1

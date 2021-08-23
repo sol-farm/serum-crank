@@ -1,0 +1,11 @@
+---
+http_rpc_url: "https://api.devnet.solana.com"
+ws_rpc_url: "ws://api.devnet.solana.com"
+key_path: ~/.config/solana/id.json
+log_file: liquidator.log
+debug_log: false
+markets:
+  - name: TULIP-USDC
+    market_account: somekey
+    coin_wallet: somewallet
+    pc_wallet: some_pc_wallet
