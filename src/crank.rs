@@ -1,6 +1,4 @@
-use crate::{
-    config::{Configuration, ParsedMarketKeys},
-};
+use crate::config::{Configuration, ParsedMarketKeys};
 use anyhow::{anyhow, format_err, Result};
 use crossbeam::{select, sync::WaitGroup};
 use crossbeam_channel::Receiver;
@@ -60,134 +58,128 @@ impl Crank {
                 },
                 default => {}
             }
-            let work_loop =
-                |market_key: &ParsedMarketKeys| -> Result<Option<Vec<Instruction>>> {
-                    let event_q_value_and_context = rpc_client.get_account_with_commitment(
-                        &market_key.keys.event_q,
-                        CommitmentConfig::processed(),
-                    )?;
-                    let event_q_slot = event_q_value_and_context.context.slot;
-                    {
-                        if let Ok(max_height) = slot_height_map.try_read() {
-                            if let Some(height) =
-                                max_height.get(&market_key.keys.market.to_string())
-                            {
-                                if event_q_slot <= *height {
-                                    info!(
+            let work_loop = |market_key: &ParsedMarketKeys| -> Result<Option<Vec<Instruction>>> {
+                let event_q_value_and_context = rpc_client.get_account_with_commitment(
+                    &market_key.keys.event_q,
+                    CommitmentConfig::processed(),
+                )?;
+                let event_q_slot = event_q_value_and_context.context.slot;
+                {
+                    if let Ok(max_height) = slot_height_map.try_read() {
+                        if let Some(height) = max_height.get(&market_key.keys.market.to_string()) {
+                            if event_q_slot <= *height {
+                                info!(
                                     "Skipping crank. Already cranked for slot. Event queue slot: {}, Max seen slot: {}",
                                     event_q_slot, height
                                 );
-                                    return Ok(None);
-                                }
-                            }
-                        } else {
-                            return Ok(None);
-                        }
-                    }
-                    let event_q_data = match event_q_value_and_context.value {
-                        Some(event_q) => event_q.data,
-                        None => {
-                            return Err(anyhow!(
-                                "{} event q value and context is none, skipping....",
-                                market_key.keys.market
-                            ));
-                        }
-                    };
-                    let req_q_data = rpc_client.get_account_with_commitment(
-                        &market_key.keys.req_q,
-                        CommitmentConfig::processed(),
-                    );
-                    let req_q_data = {
-                        match req_q_data {
-                            Ok(req_q_data) => match req_q_data.value {
-                                Some(acct) => acct.data,
-                                None => {
-                                    return Err(anyhow!(
-                                        "failed to retrieve market {} request q",
-                                        market_key.keys.market
-                                    ));
-                                }
-                            },
-                            Err(err) => {
-                                return Err(anyhow!(
-                                    "failed to retrieve market {} request q {:#?}",
-                                    market_key.keys.market,
-                                    err
-                                ));
+                                return Ok(None);
                             }
                         }
-                    };
-                    let inner: Cow<[u64]> = remove_dex_account_padding(&event_q_data)?;
-                    let (_header, seg0, seg1) = parse_event_queue(&inner)?;
-                    let req_inner: Cow<[u64]> = remove_dex_account_padding(&req_q_data)?;
-                    let (_req_header, req_seg0, req_seg1) = parse_event_queue(&req_inner)?;
-                    let event_q_len = seg0.len() + seg1.len();
-                    let req_q_len = req_seg0.len() + req_seg1.len();
-                    info!(
-                        "Size of request queue is {}, market {}, coin {}, pc {}",
-                        req_q_len,
-                        market_key.keys.market,
-                        market_key.coin_wallet,
-                        market_key.pc_wallet
-                    );
-                    if event_q_len == 0 {
+                    } else {
                         return Ok(None);
                     }
-                    info!(
-                        "Total event queue length: {}, market {}, coin {}, pc {}",
-                        event_q_len,
-                        market_key.keys.market,
-                        market_key.coin_wallet,
-                        market_key.pc_wallet
-                    );
-                    let accounts = seg0.iter().chain(seg1.iter()).map(|event| event.owner);
-                    let mut used_accounts = BTreeSet::new();
-                    for account in accounts {
-                        used_accounts.insert(account);
-                        if used_accounts.len() >= self.config.crank.num_accounts {
-                            break;
+                }
+                let event_q_data = match event_q_value_and_context.value {
+                    Some(event_q) => event_q.data,
+                    None => {
+                        return Err(anyhow!(
+                            "{} event q value and context is none, skipping....",
+                            market_key.keys.market
+                        ));
+                    }
+                };
+                let req_q_data = rpc_client.get_account_with_commitment(
+                    &market_key.keys.req_q,
+                    CommitmentConfig::processed(),
+                );
+                let req_q_data = {
+                    match req_q_data {
+                        Ok(req_q_data) => match req_q_data.value {
+                            Some(acct) => acct.data,
+                            None => {
+                                return Err(anyhow!(
+                                    "failed to retrieve market {} request q",
+                                    market_key.keys.market
+                                ));
+                            }
+                        },
+                        Err(err) => {
+                            return Err(anyhow!(
+                                "failed to retrieve market {} request q {:#?}",
+                                market_key.keys.market,
+                                err
+                            ));
                         }
                     }
-                    let orders_accounts: Vec<_> = used_accounts.into_iter().collect();
-                    info!(
-                        "Number of unique order accounts: {}, market {}, coin {}, pc {}",
-                        orders_accounts.len(),
-                        market_key.keys.market,
-                        market_key.coin_wallet,
-                        market_key.pc_wallet
-                    );
-                    info!(
-                        "First 5 accounts: {:?}",
-                        orders_accounts
-                            .iter()
-                            .take(5)
-                            .map(hash_accounts)
-                            .collect::<Vec::<_>>()
-                    );
-
-                    let mut account_metas = Vec::with_capacity(orders_accounts.len() + 4);
-                    for pubkey_words in orders_accounts {
-                        let pubkey = Pubkey::new(transmute_to_bytes(&pubkey_words));
-                        account_metas.push(AccountMeta::new(pubkey, false));
-                    }
-                    for pubkey in [
-                        &market_key.keys.market,
-                        &market_key.keys.event_q,
-                        &market_key.coin_wallet,
-                        &market_key.pc_wallet,
-                    ]
-                    .iter()
-                    {
-                        account_metas.push(AccountMeta::new(**pubkey, false));
-                    }
-                    let instructions = consume_events_ix(
-                        &dex_program,
-                        &payer,
-                        account_metas,
-                        self.config.crank.events_per_worker,
-                    )?;
-                    Ok(Some(instructions))
                 };
+                let inner: Cow<[u64]> = remove_dex_account_padding(&event_q_data)?;
+                let (_header, seg0, seg1) = parse_event_queue(&inner)?;
+                let req_inner: Cow<[u64]> = remove_dex_account_padding(&req_q_data)?;
+                let (_req_header, req_seg0, req_seg1) = parse_event_queue(&req_inner)?;
+                let event_q_len = seg0.len() + seg1.len();
+                let req_q_len = req_seg0.len() + req_seg1.len();
+                info!(
+                    "Size of request queue is {}, market {}, coin {}, pc {}",
+                    req_q_len, market_key.keys.market, market_key.coin_wallet, market_key.pc_wallet
+                );
+                if event_q_len == 0 {
+                    return Ok(None);
+                }
+                info!(
+                    "Total event queue length: {}, market {}, coin {}, pc {}",
+                    event_q_len,
+                    market_key.keys.market,
+                    market_key.coin_wallet,
+                    market_key.pc_wallet
+                );
+                let accounts = seg0.iter().chain(seg1.iter()).map(|event| event.owner);
+                let mut used_accounts = BTreeSet::new();
+                for account in accounts {
+                    used_accounts.insert(account);
+                    if used_accounts.len() >= self.config.crank.num_accounts {
+                        break;
+                    }
+                }
+                let orders_accounts: Vec<_> = used_accounts.into_iter().collect();
+                info!(
+                    "Number of unique order accounts: {}, market {}, coin {}, pc {}",
+                    orders_accounts.len(),
+                    market_key.keys.market,
+                    market_key.coin_wallet,
+                    market_key.pc_wallet
+                );
+                info!(
+                    "First 5 accounts: {:?}",
+                    orders_accounts
+                        .iter()
+                        .take(5)
+                        .map(hash_accounts)
+                        .collect::<Vec::<_>>()
+                );
+
+                let mut account_metas = Vec::with_capacity(orders_accounts.len() + 4);
+                for pubkey_words in orders_accounts {
+                    let pubkey = Pubkey::new(transmute_to_bytes(&pubkey_words));
+                    account_metas.push(AccountMeta::new(pubkey, false));
+                }
+                for pubkey in [
+                    &market_key.keys.market,
+                    &market_key.keys.event_q,
+                    &market_key.coin_wallet,
+                    &market_key.pc_wallet,
+                ]
+                .iter()
+                {
+                    account_metas.push(AccountMeta::new(**pubkey, false));
+                }
+                let instructions = consume_events_ix(
+                    &dex_program,
+                    &payer,
+                    account_metas,
+                    self.config.crank.events_per_worker,
+                )?;
+                Ok(Some(instructions))
+            };
             info!("starting crank run");
             {
                 let market_keys = market_keys.clone();
@@ -282,35 +274,40 @@ impl Crank {
                             }
                             info!("finished chunked crank instruction processing")
                         } else {
-                            let res = run_loop(&instructions);
-                            if res.is_err() {
-                                error!("failed to send crank instructions {:#?}", res.err());
+                            if instructions_markets.len() > 0 {
+                                let res = run_loop(&instructions);
+                                if res.is_err() {
+                                    error!("failed to send crank instructions {:#?}", res.err());
+                                } else {
+                                    info!(
+                                        "crank ran {} processed {} instructions for {} markets: {:#?}",
+                                        res.unwrap(),
+                                        instructions.len(),
+                                        instructions_markets.len(),
+                                        instructions_markets,
+                                    );
+                                }
                             } else {
-                                info!(
-                                    "crank ran {} processed {} instructions for {} markets: {:#?}",
-                                    res.unwrap(),
-                                    instructions.len(),
-                                    instructions_markets.len(),
-                                    instructions_markets,
-                                );
+                                warn!("no markets needed cranking");
                             }
-                        }
-                        let slot_number = rpc_client.get_slot();
-                        match slot_number {
-                            Ok(slot_number) => {
-                                match slot_height_map.try_write() {
+                            let slot_number = rpc_client.get_slot();
+                            match slot_number {
+                                Ok(slot_number) => match slot_height_map.try_write() {
                                     Ok(mut height_writer) => {
                                         for market in instructions_markets.iter() {
                                             height_writer.insert(market.to_string(), slot_number);
                                         }
-                                    },
-                                    Err(err) => {
-                                        error!("failed to claim lock on slot height map {:#?}", err);
                                     }
+                                    Err(err) => {
+                                        error!(
+                                            "failed to claim lock on slot height map {:#?}",
+                                            err
+                                        );
+                                    }
+                                },
+                                Err(err) => {
+                                    error!("failed to retrieve slot number {:#?}", err);
                                 }
-                            },
-                            Err(err) => {
-                                error!("failed to retrieve slot number {:#?}", err);
                             }
                         }
                     }
@@ -320,7 +317,9 @@ impl Crank {
                 }
             }
             info!("finished crank run");
-            std::thread::sleep(std::time::Duration::from_secs(self.config.crank.max_wait_for_events_delay));
+            std::thread::sleep(std::time::Duration::from_secs(
+                self.config.crank.max_wait_for_events_delay,
+            ));
         }
     }
 }

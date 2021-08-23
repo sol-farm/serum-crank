@@ -1,16 +1,16 @@
 #[global_allocator]
 static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
-use std::sync::Arc;
-use crossbeam::sync::WaitGroup;
-use crossbeam_channel;
 use anyhow::{anyhow, Result};
 use clap::{App, Arg, SubCommand};
+use crossbeam::sync::WaitGroup;
+use crossbeam_channel;
 use log::{error, info, warn};
 use signal_hook::{
     consts::{SIGINT, SIGQUIT, SIGTERM},
     iterator::Signals,
 };
+use std::sync::Arc;
 pub mod config;
 pub mod crank;
 
@@ -61,7 +61,7 @@ async fn process_matches<'a>(
             )?);
             cfg.init_log(false)?;
             let mut signals =
-            Signals::new(vec![SIGINT, SIGTERM, SIGQUIT]).expect("failed to registers signals");
+                Signals::new(vec![SIGINT, SIGTERM, SIGQUIT]).expect("failed to registers signals");
             let (s, r) = crossbeam_channel::unbounded();
             let wg = WaitGroup::new();
             {
@@ -82,7 +82,10 @@ async fn process_matches<'a>(
             let err = s.send(true);
             if err.is_err() {
                 error!("failed to send exit notif {:#?}", err.err());
-                return Err(anyhow!("unexpected error during shutdown, failed to send exit notifications").into());
+                return Err(anyhow!(
+                    "unexpected error during shutdown, failed to send exit notifications"
+                )
+                .into());
             }
             wg.wait()
         }
