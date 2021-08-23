@@ -98,7 +98,7 @@ impl Crank {
                             "{} request q value and context is none, skipping....",
                             market_key.keys.market
                         ));
-                    }   
+                    }
                 };
                 let inner: Cow<[u64]> = remove_dex_account_padding(&event_q_data)?;
                 let (_header, seg0, seg1) = parse_event_queue(&inner)?;
@@ -291,10 +291,7 @@ impl Crank {
                                     }
                                 }
                                 Err(err) => {
-                                    error!(
-                                        "failed to claim lock on slot height map {:#?}",
-                                        err
-                                    );
+                                    error!("failed to claim lock on slot height map {:#?}", err);
                                 }
                             },
                             Err(err) => {
@@ -363,24 +360,12 @@ pub fn get_keys_for_market<'a>(
     );
     Ok(MarketPubkeys {
         market: *market,
-        req_q: Pubkey::new(transmute_one_to_bytes(&identity(
-            market_state.req_q,
-        ))),
-        event_q: Pubkey::new(transmute_one_to_bytes(&identity(
-            market_state.event_q,
-        ))),
-        bids: Pubkey::new(transmute_one_to_bytes(&identity(
-            market_state.bids,
-        ))),
-        asks: Pubkey::new(transmute_one_to_bytes(&identity(
-            market_state.asks,
-        ))),
-        coin_vault: Pubkey::new(transmute_one_to_bytes(&identity(
-            market_state.coin_vault,
-        ))),
-        pc_vault: Pubkey::new(transmute_one_to_bytes(&identity(
-            market_state.pc_vault,
-        ))),
+        req_q: Pubkey::new(transmute_one_to_bytes(&identity(market_state.req_q))),
+        event_q: Pubkey::new(transmute_one_to_bytes(&identity(market_state.event_q))),
+        bids: Pubkey::new(transmute_one_to_bytes(&identity(market_state.bids))),
+        asks: Pubkey::new(transmute_one_to_bytes(&identity(market_state.asks))),
+        coin_vault: Pubkey::new(transmute_one_to_bytes(&identity(market_state.coin_vault))),
+        pc_vault: Pubkey::new(transmute_one_to_bytes(&identity(market_state.pc_vault))),
         vault_signer_key: vault_signer_key,
     })
 }

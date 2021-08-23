@@ -167,7 +167,7 @@ impl Default for Configuration {
             http_rpc_url: "https://api.devnet.solana.com".to_string(),
             ws_rpc_url: "ws://api.devnet.solana.com".to_string(),
             key_path: "~/.config/solana/id.json".to_string(),
-            log_file: "liquidator.log".to_string(),
+            log_file: "cranker.log".to_string(),
             debug_log: false,
             crank: Crank::default(),
         }
