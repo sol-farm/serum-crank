@@ -2,7 +2,8 @@ use crate::{
     config::{Configuration, ParsedMarketKeys},
 };
 use anyhow::{anyhow, format_err, Result};
-use crossbeam::sync::WaitGroup;
+use crossbeam::{select, sync::WaitGroup};
+use crossbeam_channel::Receiver;
 use crossbeam_queue::ArrayQueue;
 use log::{debug, error, info, warn};
 use safe_transmute::{
@@ -44,7 +45,7 @@ impl Crank {
     pub fn new(config: Arc<Configuration>) -> Arc<Self> {
         Arc::new(Self { config })
     }
-    pub fn start(self: &Arc<Self>) -> Result<()> {
+    pub fn start(self: &Arc<Self>, exit_chan: Receiver<bool>) -> Result<()> {
         let rpc_client = Arc::new(RpcClient::new(self.config.http_rpc_url.clone()));
         let payer = Arc::new(self.config.payer());
         let dex_program = Pubkey::from_str(self.config.crank.dex_program.as_str()).unwrap();
@@ -52,6 +53,13 @@ impl Crank {
         let slot_height_map: Arc<RwLock<HashMap<String, u64>>> =
             Arc::new(RwLock::new(HashMap::new()));
         loop {
+            select! {
+                recv(exit_chan) -> _msg => {
+                    warn!("caught exit signal");
+                    return Ok(());
+                },
+                default => {}
+            }
             let work_loop =
                 |market_key: &ParsedMarketKeys| -> Result<Option<Vec<Instruction>>> {
                     let event_q_value_and_context = rpc_client.get_account_with_commitment(
@@ -173,12 +181,10 @@ impl Crank {
                         account_metas.push(AccountMeta::new(**pubkey, false));
                     }
                     let instructions = consume_events_ix(
-                        &rpc_client,
                         &dex_program,
                         &payer,
                         account_metas,
                         self.config.crank.events_per_worker,
-                        &market_key.keys.event_q,
                     )?;
                     Ok(Some(instructions))
                 };
@@ -263,7 +269,7 @@ impl Crank {
                             // so split it up
                             let instructions_chunks = instructions.chunks(instructions.len() / 2);
                             info!("starting chunked crank instruction processing");
-                            for (idx, chunk) in instructions_chunks.enumerate() {
+                            for (_idx, chunk) in instructions_chunks.enumerate() {
                                 let res = run_loop(&chunk.to_vec());
                                 if res.is_err() {
                                     error!(
@@ -281,7 +287,7 @@ impl Crank {
                                 error!("failed to send crank instructions {:#?}", res.err());
                             } else {
                                 info!(
-                                    "crank ran {}. processed {} instructions for {} markets: {:#?}",
+                                    "crank ran {} processed {} instructions for {} markets: {:#?}",
                                     res.unwrap(),
                                     instructions.len(),
                                     instructions_markets.len(),
@@ -320,12 +326,10 @@ impl Crank {
 }
 
 fn consume_events_ix(
-    client: &Arc<RpcClient>,
     program_id: &Pubkey,
     payer: &Keypair,
     account_metas: Vec<AccountMeta>,
     to_consume: usize,
-    event_q: &Pubkey,
 ) -> Result<Vec<Instruction>> {
     let instruction_data: Vec<u8> = MarketInstruction::ConsumeEvents(to_consume as u16).pack();
     let instruction = Instruction {
@@ -446,43 +450,4 @@ pub struct MarketPubkeys {
     pub coin_vault: Box<Pubkey>,
     pub pc_vault: Box<Pubkey>,
     pub vault_signer_key: Box<Pubkey>,
-}
-
-fn consume_events_once(
-    client: &Arc<RpcClient>,
-    program_id: &Pubkey,
-    payer: &Keypair,
-    account_metas: Vec<AccountMeta>,
-    to_consume: usize,
-    event_q: &Pubkey,
-) -> Result<Signature> {
-    let _start = std::time::Instant::now();
-    let instruction_data: Vec<u8> = MarketInstruction::ConsumeEvents(to_consume as u16).pack();
-    let instruction = Instruction {
-        program_id: *program_id,
-        accounts: account_metas,
-        data: instruction_data,
-    };
-    let random_instruction = solana_sdk::system_instruction::transfer(
-        &payer.pubkey(),
-        &payer.pubkey(),
-        rand::random::<u64>() % 10000 + 1,
-    );
-    let (recent_hash, _fee_calc) = client.get_recent_blockhash()?;
-    let txn = Transaction::new_signed_with_payer(
-        &[instruction, random_instruction],
-        Some(&payer.pubkey()),
-        &[payer],
-        recent_hash,
-    );
-
-    info!("Consuming events ...");
-    let signature = client.send_transaction_with_config(
-        &txn,
-        RpcSendTransactionConfig {
-            skip_preflight: true,
-            ..RpcSendTransactionConfig::default()
-        },
-    )?;
-    Ok(signature)
 }

@@ -540,6 +540,7 @@ dependencies = [
  "serde_yaml",
  "serum-common",
  "serum_dex",
+ "signal-hook",
  "simplelog",
  "slog-scope",
  "slog-stdlog",
@@ -2976,6 +2977,16 @@ dependencies = [
  "digest 0.9.0",
  "keccak",
  "opaque-debug 0.3.0",
+]
+
+[[package]]
+name = "signal-hook"
+version = "0.3.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "470c5a6397076fae0094aaf06a08e6ba6f37acb77d3b1b91ea92b4d6c8650c39"
+dependencies = [
+ "libc",
+ "signal-hook-registry",
 ]
 
 [[package]]
