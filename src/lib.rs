@@ -1,5 +1,4 @@
 #![deny(unaligned_references)]
-#![allow(dead_code)]
 
 use std::borrow::Cow;
 use std::cmp::{max, min};
