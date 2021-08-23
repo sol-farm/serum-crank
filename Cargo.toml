@@ -10,7 +10,6 @@ path = "src/main.rs"
 [dependencies]
 # 1be91f2863d8ecede32daaae7e768034e24bbc79 == v0.4.0 commit
 serum_dex = { git = "https://github.com/project-serum/serum-dex.git", rev = "1be91f2863d8ecede32daaae7e768034e24bbc79", default-features = false, features = ["client"] }
-serum-common = { git = "https://github.com/project-serum/serum-dex.git", rev ="1be91f2863d8ecede32daaae7e768034e24bbc79", features = ["client"] }
 spl-token = { version = "3.0.0-pre1", features = ["no-entrypoint"], default-features = false }
 clap = "2.33.3"
 enumflags2 = "0.6.4"
@@ -20,7 +19,6 @@ anyhow = "1.0.43"
 rand = "0.7.3"
 safe-transmute = "0.11.0"
 log = "0.4"
-debug_print = "1.0.0"
 tokio = { version = "1.8.0", features = ["rt-multi-thread"] }
 jemallocator = "0.3.2"
 serde_json = "1.0.64"
