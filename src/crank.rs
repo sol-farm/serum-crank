@@ -3,7 +3,7 @@ use anyhow::{anyhow, format_err, Result};
 use crossbeam::{select, sync::WaitGroup};
 use crossbeam_channel::Receiver;
 use crossbeam_queue::ArrayQueue;
-use log::{debug, error, info, warn};
+use log::{error, info, warn};
 use safe_transmute::{
     guard::SingleManyGuard,
     to_bytes::{transmute_one_to_bytes, transmute_to_bytes},
@@ -23,16 +23,15 @@ use solana_sdk::signature::Signature;
 use solana_sdk::signature::Signer;
 use solana_sdk::signer::keypair::Keypair;
 use solana_sdk::transaction::Transaction;
-use solana_sdk::{self, pubkey::Pubkey, signature::read_keypair_file};
+use solana_sdk::{self, pubkey::Pubkey};
 use std::collections::BTreeSet;
 use std::convert::identity;
 use std::mem::size_of;
 use std::str::FromStr;
 use std::sync::Arc;
-use std::sync::Mutex;
+
 use std::{borrow::Cow, collections::HashMap, sync::RwLock};
 use std::{
-    cmp::{max, min},
     ops::Deref,
 };
 pub struct Crank {

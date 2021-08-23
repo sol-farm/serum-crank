@@ -2,10 +2,10 @@
 static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
 use anyhow::{anyhow, Result};
-use clap::{App, Arg, SubCommand};
+use clap::{Arg, SubCommand};
 use crossbeam::sync::WaitGroup;
 use crossbeam_channel;
-use log::{error, info, warn};
+use log::{error, warn};
 use signal_hook::{
     consts::{SIGINT, SIGQUIT, SIGTERM},
     iterator::Signals,
@@ -49,12 +49,12 @@ async fn process_matches<'a>(
 ) -> Result<()> {
     match matches.subcommand() {
         ("config", Some(config)) => match config.subcommand() {
-            ("new", Some(new_config)) => {
+            ("new", Some(_new_config)) => {
                 config::Configuration::new(config_file_path.as_str(), false)?;
             }
             _ => return Err(anyhow!("failed to match subcommand")),
         },
-        ("run", Some(run_crank)) => {
+        ("run", Some(_run_crank)) => {
             let cfg = Arc::new(config::Configuration::load(
                 config_file_path.as_str(),
                 false,
