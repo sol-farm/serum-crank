@@ -1,8 +1,12 @@
+use crate::crank::{get_keys_for_market, MarketPubkeys};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use simplelog::*;
+use solana_client::rpc_client::RpcClient;
+use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::{read_keypair_file, Keypair};
 use std::fs::File;
+use std::sync::Arc;
 use std::{fs, str::FromStr};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -24,6 +28,7 @@ pub struct Crank {
     pub num_accounts: usize,
     pub events_per_worker: usize,
     pub num_workers: usize,
+    pub max_markets_per_tx: usize,
 }
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
@@ -32,6 +37,36 @@ pub struct Market {
     pub market_account: String,
     pub coin_wallet: String,
     pub pc_wallet: String,
+}
+
+#[derive(Clone, Default, Debug, PartialEq)]
+pub struct ParsedMarketKeys {
+    pub keys: MarketPubkeys,
+    pub coin_wallet: Pubkey,
+    pub pc_wallet: Pubkey,
+}
+
+impl Crank {
+    pub fn market_keys(
+        &self,
+        rpc: &Arc<RpcClient>,
+        program_id: Pubkey,
+    ) -> Result<Vec<ParsedMarketKeys>> {
+        let mut markets = vec![];
+        for market in self.markets.iter() {
+            let market_keys = get_keys_for_market(
+                &rpc,
+                &program_id,
+                &Pubkey::from_str(market.market_account.as_str()).unwrap(),
+            )?;
+            markets.push(ParsedMarketKeys {
+                keys: market_keys,
+                coin_wallet: Pubkey::from_str(market.coin_wallet.as_str()).unwrap(),
+                pc_wallet: Pubkey::from_str(market.pc_wallet.as_str()).unwrap(),
+            })
+        }
+        Ok(markets)
+    }
 }
 
 impl Configuration {
@@ -156,6 +191,7 @@ impl Default for Crank {
             max_wait_for_events_delay: 60,
             num_accounts: 32,
             events_per_worker: 5,
+            max_markets_per_tx: 6,
         }
     }
 }

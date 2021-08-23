@@ -1,6 +1,7 @@
 .PHONY: build-cli
 build-cli:
 	cargo build --release
+	cp target/release/crank crank
 
 
 .PHONY: build-docker

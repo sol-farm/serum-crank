@@ -1,9 +1,12 @@
 #[global_allocator]
 static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
+use std::sync::Arc;
+
 use anyhow::{anyhow, Result};
 use clap::{App, Arg, SubCommand};
 use log::{error, info, warn};
+pub mod bounded_broadcast;
 pub mod config;
 pub mod crank;
 
@@ -28,6 +31,7 @@ async fn main() {
                     SubCommand::with_name("new").about("generates a new configuration file")
                 ]),
         )
+        .subcommand(SubCommand::with_name("crank").about("runs the serum crnak"))
         .get_matches();
     let config_file_path = get_config_or_default(&matches);
     let res = process_matches(&matches, config_file_path).await;
@@ -46,6 +50,15 @@ async fn process_matches<'a>(
             }
             _ => return Err(anyhow!("failed to match subcommand")),
         },
+        ("crank", Some(run_crank)) => {
+            let cfg = Arc::new(config::Configuration::load(
+                config_file_path.as_str(),
+                false,
+            )?);
+            cfg.init_log(false)?;
+            let crank_turner = crank::Crank::new(cfg);
+            crank_turner.start()?;
+        }
         _ => return Err(anyhow!("failed to match subcommand")),
     }
     Ok(())
