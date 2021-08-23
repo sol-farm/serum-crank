@@ -2,14 +2,7 @@ version: "3.5"
 services:
   tulip:
     image: serum-crank:latest
-    environment:
-      COINWALLET: "DhLZthVn5sr8K16TLDAKZdAPv9VXwhKxJzRizaYgp614"
-      PCWALLET: "DhLZthVn5sr8K16TLDAKZdAPv9VXwhKxJzRizaYgp614"
-      EVENTSPERWORKER: 5
-      LOGDIR: /tmp/crank.log
-      MARKET: "8GufnKq7YnXKhnB3WNhgy5PzU9uvHbaaRrZWQK6ixPxW"
-      NUMACCOUNTS: 5
-      NUMWORKERS: 1
-      RPC_URL: "https://solana-api.projectserum.com"
+    command: --config /tmp/config.yaml run
     volumes:
       - ./payer.json:/tmp/payer.json
+      - ./config.yaml:/tmp/config.yaml

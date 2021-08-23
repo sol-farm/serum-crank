@@ -6,7 +6,6 @@ use std::sync::Arc;
 use anyhow::{anyhow, Result};
 use clap::{App, Arg, SubCommand};
 use log::{error, info, warn};
-pub mod bounded_broadcast;
 pub mod config;
 pub mod crank;
 
@@ -31,7 +30,7 @@ async fn main() {
                     SubCommand::with_name("new").about("generates a new configuration file")
                 ]),
         )
-        .subcommand(SubCommand::with_name("crank").about("runs the serum crnak"))
+        .subcommand(SubCommand::with_name("run").about("runs the serum crank"))
         .get_matches();
     let config_file_path = get_config_or_default(&matches);
     let res = process_matches(&matches, config_file_path).await;

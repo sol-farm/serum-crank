@@ -1,5 +1,4 @@
 use crate::{
-    bounded_broadcast::BoundedBroadcast,
     config::{Configuration, ParsedMarketKeys},
 };
 use anyhow::{anyhow, format_err, Result};
@@ -183,6 +182,7 @@ impl Crank {
                     )?;
                     Ok(Some(instructions))
                 };
+            info!("starting crank run");
             {
                 let market_keys = market_keys.clone();
                 let res = crossbeam::thread::scope(|s| {
@@ -311,11 +311,9 @@ impl Crank {
                 });
                 if res.is_err() {
                     error!("failed to run crossbeam scope {:#?}", res.err());
-                } else {
-                    info!("crossbeam scope thread ran");
                 }
             }
-            
+            info!("finished crank run");
             std::thread::sleep(std::time::Duration::from_secs(self.config.crank.max_wait_for_events_delay));
         }
     }

@@ -23,11 +23,9 @@ pub struct Configuration {
 pub struct Crank {
     pub markets: Vec<Market>,
     pub dex_program: String,
-    pub max_queue_length: u64,
     pub max_wait_for_events_delay: u64,
     pub num_accounts: usize,
     pub events_per_worker: usize,
-    pub num_workers: usize,
     pub max_markets_per_tx: usize,
 }
 
@@ -186,8 +184,6 @@ impl Default for Crank {
                 coin_wallet: "somewallet".to_string(),
                 pc_wallet: "some_pc_wallet".to_string(),
             }],
-            num_workers: 1,
-            max_queue_length: 1,
             max_wait_for_events_delay: 60,
             num_accounts: 32,
             events_per_worker: 5,
