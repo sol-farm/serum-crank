@@ -49,7 +49,7 @@ async fn process_matches<'a>(
             }
             _ => return Err(anyhow!("failed to match subcommand")),
         },
-        ("crank", Some(run_crank)) => {
+        ("run", Some(run_crank)) => {
             let cfg = Arc::new(config::Configuration::load(
                 config_file_path.as_str(),
                 false,
