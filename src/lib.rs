@@ -79,40 +79,6 @@ impl Opts {
 
 #[derive(Clap, Debug)]
 pub enum Command {
-    Genesis {
-        #[clap(long, short)]
-        payer: String,
-
-        #[clap(long, short)]
-        mint: String,
-
-        #[clap(long, short)]
-        owner_pubkey: Pubkey,
-
-        #[clap(long, short)]
-        decimals: u8,
-    },
-    Mint {
-        #[clap(long, short)]
-        payer: String,
-
-        #[clap(long, short)]
-        signer: String,
-
-        #[clap(long, short)]
-        mint_pubkey: Pubkey,
-
-        #[clap(long, short)]
-        recipient: Option<Pubkey>,
-
-        #[clap(long, short)]
-        quantity: u64,
-    },
-    CreateAccount {
-        mint_pubkey: Pubkey,
-        owner_pubkey: Pubkey,
-        payer: String,
-    },
     ConsumeEvents {
         #[clap(long, short)]
         dex_program_id: Pubkey,
@@ -137,22 +103,6 @@ pub enum Command {
         #[clap(long)]
         max_wait_for_events_delay: Option<u64>,
     },
-    MatchOrders {
-        #[clap(long, short)]
-        dex_program_id: Pubkey,
-
-        #[clap(long)]
-        payer: String,
-
-        #[clap(long, short)]
-        market: Pubkey,
-
-        #[clap(long, short)]
-        coin_wallet: Pubkey,
-
-        #[clap(long, short)]
-        pc_wallet: Pubkey,
-    },
     MonitorQueue {
         #[clap(long, short)]
         dex_program_id: Pubkey,
@@ -167,99 +117,12 @@ pub enum Command {
         dex_program_id: Pubkey,
         market: Pubkey,
     },
-    WholeShebang {
-        payer: String,
-        dex_program_id: Pubkey,
-    },
-    SettleFunds {
-        payer: String,
-        dex_program_id: Pubkey,
-        market: Pubkey,
-        orders: Pubkey,
-        coin_wallet: Pubkey,
-        pc_wallet: Pubkey,
-        #[clap(long, short)]
-        signer: Option<String>,
-    },
-    ListMarket {
-        payer: String,
-        dex_program_id: Pubkey,
-        #[clap(long, short)]
-        coin_mint: Pubkey,
-        #[clap(long, short)]
-        pc_mint: Pubkey,
-        #[clap(long)]
-        coin_lot_size: Option<u64>,
-        #[clap(long)]
-        pc_lot_size: Option<u64>,
-    },
-    InitializeTokenAccount {
-        mint: Pubkey,
-        owner_account: String,
-    },
 }
 
 pub fn start(opts: Opts) -> Result<()> {
     let client = opts.client();
 
     match opts.command {
-        Command::Genesis {
-            payer,
-            mint,
-            owner_pubkey,
-            decimals,
-        } => {
-            let payer = read_keypair_file(&payer)?;
-            let mint = read_keypair_file(&mint)?;
-            create_and_init_mint(&client, &payer, &mint, &owner_pubkey, decimals)?;
-        }
-        Command::Mint {
-            payer,
-            signer,
-            mint_pubkey,
-            recipient,
-            quantity,
-        } => {
-            let payer = read_keypair_file(&payer)?;
-            let minter = read_keypair_file(&signer)?;
-            match recipient.as_ref() {
-                Some(recipient) => {
-                    mint_to_existing_account(
-                        &client,
-                        &payer,
-                        &minter,
-                        &mint_pubkey,
-                        recipient,
-                        quantity,
-                    )?;
-                }
-                None => {
-                    mint_to_new_account(&client, &payer, &minter, &mint_pubkey, quantity)?;
-                }
-            };
-        }
-        Command::CreateAccount { .. } => unimplemented!(),
-        Command::MatchOrders {
-            ref dex_program_id,
-            ref payer,
-            ref market,
-            ref coin_wallet,
-            ref pc_wallet,
-        } => {
-            let payer = read_keypair_file(&payer)?;
-
-            debug_println!("Getting market keys ...");
-            let market_keys = get_keys_for_market(&client, dex_program_id, &market)?;
-            debug_println!("{:#?}", market_keys);
-            match_orders(
-                &client,
-                dex_program_id,
-                &payer,
-                &market_keys,
-                coin_wallet,
-                pc_wallet,
-            )?;
-        }
         Command::ConsumeEvents {
             ref dex_program_id,
             ref payer,
@@ -313,64 +176,6 @@ pub fn start(opts: Opts) -> Result<()> {
             debug_println!("Header:\n{:#x?}", header);
             debug_println!("Seg0:\n{:#x?}", events_seg0);
             debug_println!("Seg1:\n{:#x?}", events_seg1);
-        }
-        Command::WholeShebang {
-            ref dex_program_id,
-            ref payer,
-        } => {
-            let payer = read_keypair_file(payer)?;
-            whole_shebang(&client, dex_program_id, &payer)?;
-        }
-        Command::SettleFunds {
-            ref payer,
-            ref dex_program_id,
-            ref market,
-            ref orders,
-            ref coin_wallet,
-            ref pc_wallet,
-            ref signer,
-        } => {
-            let payer = read_keypair_file(payer)?;
-            let signer = signer.as_ref().map(|s| read_keypair_file(&s)).transpose()?;
-            let market_keys = get_keys_for_market(&client, dex_program_id, &market)?;
-            settle_funds(
-                &client,
-                dex_program_id,
-                &payer,
-                &market_keys,
-                signer.as_ref(),
-                orders,
-                coin_wallet,
-                pc_wallet,
-            )?;
-        }
-        Command::ListMarket {
-            ref payer,
-            ref dex_program_id,
-            ref coin_mint,
-            ref pc_mint,
-            coin_lot_size,
-            pc_lot_size,
-        } => {
-            let payer = read_keypair_file(payer)?;
-            let market_keys = list_market(
-                &client,
-                dex_program_id,
-                &payer,
-                coin_mint,
-                pc_mint,
-                coin_lot_size.unwrap_or(1_000_000),
-                pc_lot_size.unwrap_or(10_000),
-            )?;
-            println!("Listed market: {:#?}", market_keys);
-        }
-        Command::InitializeTokenAccount {
-            ref mint,
-            ref owner_account,
-        } => {
-            let owner = read_keypair_file(owner_account)?;
-            let initialized_account = initialize_token_account(&client, mint, &owner)?;
-            debug_println!("Initialized account: {}", initialized_account.pubkey());
         }
     }
     Ok(())
@@ -818,136 +623,6 @@ pub fn consume_events_instruction(
     Ok(Some(instruction))
 }
 
-fn whole_shebang(client: &RpcClient, program_id: &Pubkey, payer: &Keypair) -> Result<()> {
-    let coin_mint = Keypair::generate(&mut OsRng);
-    debug_println!("Coin mint: {}", coin_mint.pubkey());
-    create_and_init_mint(client, payer, &coin_mint, &payer.pubkey(), 3)?;
-
-    let pc_mint = Keypair::generate(&mut OsRng);
-    debug_println!("Pc mint: {}", pc_mint.pubkey());
-    create_and_init_mint(client, payer, &pc_mint, &payer.pubkey(), 3)?;
-
-    let market_keys = list_market(
-        client,
-        program_id,
-        payer,
-        &coin_mint.pubkey(),
-        &pc_mint.pubkey(),
-        1_000_000,
-        10_000,
-    )?;
-    debug_println!("Market keys: {:#?}", market_keys);
-
-    debug_println!("Minting coin...");
-    let coin_wallet = mint_to_new_account(
-        client,
-        payer,
-        payer,
-        &coin_mint.pubkey(),
-        1_000_000_000_000_000,
-    )?;
-    debug_println!("Minted {}", coin_wallet.pubkey());
-
-    debug_println!("Minting price currency...");
-    let pc_wallet = mint_to_new_account(
-        client,
-        payer,
-        payer,
-        &pc_mint.pubkey(),
-        1_000_000_000_000_000,
-    )?;
-    debug_println!("Minted {}", pc_wallet.pubkey());
-
-    let mut orders = None;
-
-    debug_println!("Initializing open orders");
-    init_open_orders(client, program_id, payer, &market_keys, &mut orders)?;
-
-    debug_println!("Placing bid...");
-    place_order(
-        client,
-        program_id,
-        payer,
-        &pc_wallet.pubkey(),
-        &market_keys,
-        &mut orders,
-        NewOrderInstructionV3 {
-            side: Side::Bid,
-            limit_price: NonZeroU64::new(500).unwrap(),
-            max_coin_qty: NonZeroU64::new(1_000).unwrap(),
-            max_native_pc_qty_including_fees: NonZeroU64::new(500_000).unwrap(),
-            order_type: OrderType::Limit,
-            client_order_id: 019269,
-            self_trade_behavior: SelfTradeBehavior::DecrementTake,
-            limit: std::u16::MAX,
-        },
-    )?;
-
-    debug_println!("Bid account: {}", orders.unwrap());
-
-    debug_println!("Placing offer...");
-    let mut orders = None;
-    place_order(
-        client,
-        program_id,
-        payer,
-        &coin_wallet.pubkey(),
-        &market_keys,
-        &mut orders,
-        NewOrderInstructionV3 {
-            side: Side::Ask,
-            limit_price: NonZeroU64::new(499).unwrap(),
-            max_coin_qty: NonZeroU64::new(1_000).unwrap(),
-            max_native_pc_qty_including_fees: NonZeroU64::new(std::u64::MAX).unwrap(),
-            order_type: OrderType::Limit,
-            limit: std::u16::MAX,
-            self_trade_behavior: SelfTradeBehavior::DecrementTake,
-            client_order_id: 985982,
-        },
-    )?;
-
-    // Cancel the open order so that we can close it later.
-    cancel_order_by_client_order_id(
-        client,
-        program_id,
-        payer,
-        &market_keys,
-        &orders.unwrap(),
-        985982,
-    )?;
-
-    debug_println!("Ask account: {}", orders.unwrap());
-
-    debug_println!("Consuming events in 15s ...");
-    std::thread::sleep(std::time::Duration::new(15, 0));
-    consume_events(
-        client,
-        program_id,
-        payer,
-        &market_keys,
-        &coin_wallet.pubkey(),
-        &pc_wallet.pubkey(),
-    )?;
-    settle_funds(
-        client,
-        program_id,
-        payer,
-        &market_keys,
-        Some(payer),
-        &orders.unwrap(),
-        &coin_wallet.pubkey(),
-        &pc_wallet.pubkey(),
-    )?;
-    close_open_orders(
-        client,
-        program_id,
-        payer,
-        &market_keys,
-        orders.as_ref().unwrap(),
-    )?;
-    Ok(())
-}
-
 pub fn cancel_order_by_client_order_id(
     client: &RpcClient,
     program_id: &Pubkey,
@@ -1174,99 +849,6 @@ fn settle_funds(
     Ok(())
 }
 
-pub fn list_market(
-    client: &RpcClient,
-    program_id: &Pubkey,
-    payer: &Keypair,
-    coin_mint: &Pubkey,
-    pc_mint: &Pubkey,
-    coin_lot_size: u64,
-    pc_lot_size: u64,
-) -> Result<MarketPubkeys> {
-    let (listing_keys, mut instructions) =
-        gen_listing_params(client, program_id, &payer.pubkey(), coin_mint, pc_mint)?;
-    let ListingKeys {
-        market_key,
-        req_q_key,
-        event_q_key,
-        bids_key,
-        asks_key,
-        vault_signer_pk,
-        vault_signer_nonce,
-    } = listing_keys;
-
-    debug_println!("Creating coin vault...");
-    let coin_vault = create_token_account(client, coin_mint, &vault_signer_pk, payer)?;
-    debug_println!("Created account: {} ...", coin_vault.pubkey());
-
-    debug_println!("Creating pc vault...");
-    let pc_vault = create_token_account(client, pc_mint, &listing_keys.vault_signer_pk, payer)?;
-    debug_println!("Created account: {} ...", pc_vault.pubkey());
-
-    let init_market_instruction = serum_dex::instruction::initialize_market(
-        &market_key.pubkey(),
-        program_id,
-        coin_mint,
-        pc_mint,
-        &coin_vault.pubkey(),
-        &pc_vault.pubkey(),
-        None,
-        None,
-        &bids_key.pubkey(),
-        &asks_key.pubkey(),
-        &req_q_key.pubkey(),
-        &event_q_key.pubkey(),
-        coin_lot_size,
-        pc_lot_size,
-        vault_signer_nonce,
-        100,
-    )?;
-    debug_println!(
-        "initialize_market_instruction: {:#?}",
-        &init_market_instruction
-    );
-
-    instructions.push(init_market_instruction);
-
-    let (recent_hash, _fee_calc) = client.get_recent_blockhash()?;
-    let signers = vec![
-        payer,
-        &market_key,
-        &req_q_key,
-        &event_q_key,
-        &bids_key,
-        &asks_key,
-        &req_q_key,
-        &event_q_key,
-    ];
-    let txn = Transaction::new_signed_with_payer(
-        &instructions,
-        Some(&payer.pubkey()),
-        &signers,
-        recent_hash,
-    );
-
-    debug_println!("txn:\n{:#x?}", txn);
-    let result = simulate_transaction(client, &txn, true, CommitmentConfig::single())?;
-    if let Some(e) = result.value.err {
-        return Err(format_err!("simulate_transaction error: {:?}", e));
-    }
-    debug_println!("{:#?}", result.value);
-    debug_println!("Listing {} ...", market_key.pubkey());
-    send_txn(client, &txn, false)?;
-
-    Ok(MarketPubkeys {
-        market: Box::new(market_key.pubkey()),
-        req_q: Box::new(req_q_key.pubkey()),
-        event_q: Box::new(event_q_key.pubkey()),
-        bids: Box::new(bids_key.pubkey()),
-        asks: Box::new(asks_key.pubkey()),
-        coin_vault: Box::new(coin_vault.pubkey()),
-        pc_vault: Box::new(pc_vault.pubkey()),
-        vault_signer_key: Box::new(vault_signer_pk),
-    })
-}
-
 struct ListingKeys {
     market_key: Keypair,
     req_q_key: Keypair,
@@ -1275,47 +857,6 @@ struct ListingKeys {
     asks_key: Keypair,
     vault_signer_pk: Pubkey,
     vault_signer_nonce: u64,
-}
-
-fn gen_listing_params(
-    client: &RpcClient,
-    program_id: &Pubkey,
-    payer: &Pubkey,
-    _coin_mint: &Pubkey,
-    _pc_mint: &Pubkey,
-) -> Result<(ListingKeys, Vec<Instruction>)> {
-    let (market_key, create_market) = create_dex_account(client, program_id, payer, 376)?;
-    let (req_q_key, create_req_q) = create_dex_account(client, program_id, payer, 640)?;
-    let (event_q_key, create_event_q) = create_dex_account(client, program_id, payer, 1 << 20)?;
-    let (bids_key, create_bids) = create_dex_account(client, program_id, payer, 1 << 16)?;
-    let (asks_key, create_asks) = create_dex_account(client, program_id, payer, 1 << 16)?;
-    let (vault_signer_nonce, vault_signer_pk) = {
-        let mut i = 0;
-        loop {
-            assert!(i < 100);
-            if let Ok(pk) = gen_vault_signer_key(i, &market_key.pubkey(), program_id) {
-                break (i, pk);
-            }
-            i += 1;
-        }
-    };
-    let info = ListingKeys {
-        market_key,
-        req_q_key,
-        event_q_key,
-        bids_key,
-        asks_key,
-        vault_signer_pk,
-        vault_signer_nonce,
-    };
-    let instructions = vec![
-        create_market,
-        create_req_q,
-        create_event_q,
-        create_bids,
-        create_asks,
-    ];
-    Ok((info, instructions))
 }
 
 fn create_dex_account(
@@ -1334,51 +875,6 @@ fn create_dex_account(
         program_id,
     );
     Ok((key, create_account_instr))
-}
-
-pub fn match_orders(
-    client: &RpcClient,
-    program_id: &Pubkey,
-    payer: &Keypair,
-    state: &MarketPubkeys,
-    coin_wallet: &Pubkey,
-    pc_wallet: &Pubkey,
-) -> Result<()> {
-    let instruction_data: Vec<u8> = MarketInstruction::MatchOrders(2).pack();
-
-    let instruction = Instruction {
-        program_id: *program_id,
-        accounts: vec![
-            AccountMeta::new(*state.market, false),
-            AccountMeta::new(*state.req_q, false),
-            AccountMeta::new(*state.event_q, false),
-            AccountMeta::new(*state.bids, false),
-            AccountMeta::new(*state.asks, false),
-            AccountMeta::new(*coin_wallet, false),
-            AccountMeta::new(*pc_wallet, false),
-        ],
-        data: instruction_data,
-    };
-
-    let (recent_hash, _fee_calc) = client.get_recent_blockhash()?;
-    let txn = Transaction::new_signed_with_payer(
-        std::slice::from_ref(&instruction),
-        Some(&payer.pubkey()),
-        &[payer],
-        recent_hash,
-    );
-
-    debug_println!("Simulating order matching ...");
-    let result = simulate_transaction(&client, &txn, true, CommitmentConfig::single())?;
-    if let Some(e) = result.value.err {
-        return Err(format_err!("simulate_transaction error: {:?}", e));
-    }
-    debug_println!("{:#?}", result.value);
-    if result.value.err.is_none() {
-        debug_println!("Matching orders ...");
-        send_txn(client, &txn, false)?;
-    }
-    Ok(())
 }
 
 fn create_account(
