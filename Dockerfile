@@ -27,5 +27,4 @@ RUN --mount=type=cache,target=/home/root/.cache/sccache cargo build --release --
 # RUN shred /root/.ssh/id_rsa && shred /root/.ssh/id_rsa.pub && rm -rf /root/.ssh
 FROM rust:1.54.0 as runtime
 COPY --from=BUILDER /tmp/crank /usr/local/bin
-COPY --from=BUILDER /home/root/app/entrypoint.sh /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/crank"]

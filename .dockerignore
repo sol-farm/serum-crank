@@ -5,7 +5,7 @@ serum_crank.tar.gz
 Makefile
 README.md
 my-crank.log
-
+crank
 # regexs
 **/*.txt
 **/yarn.lock
