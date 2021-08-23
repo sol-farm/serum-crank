@@ -1,9 +1,9 @@
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use solana_sdk::signature::{Keypair, read_keypair_file};
+use simplelog::*;
+use solana_sdk::signature::{read_keypair_file, Keypair};
 use std::fs::File;
 use std::{fs, str::FromStr};
-use simplelog::*;
-use anyhow::{Result};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Configuration {
@@ -12,9 +12,19 @@ pub struct Configuration {
     pub key_path: String,
     pub log_file: String,
     pub debug_log: bool,
-    pub markets: Vec<Market>,
+    pub crank: Crank,
 }
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct Crank {
+    pub markets: Vec<Market>,
+    pub dex_program: String,
+    pub max_queue_length: u64,
+    pub max_wait_for_events_delay: u64,
+    pub num_accounts: usize,
+    pub events_per_worker: usize,
+    pub num_workers: usize,
+}
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Market {
@@ -126,12 +136,26 @@ impl Default for Configuration {
             key_path: "~/.config/solana/id.json".to_string(),
             log_file: "liquidator.log".to_string(),
             debug_log: false,
-            markets: vec![Market{
+            crank: Crank::default(),
+        }
+    }
+}
+
+impl Default for Crank {
+    fn default() -> Self {
+        Self {
+            dex_program: "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin".to_string(),
+            markets: vec![Market {
                 name: "TULIP-USDC".to_string(),
                 market_account: "somekey".to_string(),
                 coin_wallet: "somewallet".to_string(),
                 pc_wallet: "some_pc_wallet".to_string(),
-            }]
+            }],
+            num_workers: 1,
+            max_queue_length: 1,
+            max_wait_for_events_delay: 60,
+            num_accounts: 32,
+            events_per_worker: 5,
         }
     }
 }
