@@ -59,11 +59,14 @@ impl Crank {
                 default => {}
             }
             let work_loop = |market_key: &ParsedMarketKeys| -> Result<Option<Vec<Instruction>>> {
-                let event_q_value_and_context = rpc_client.get_account_with_commitment(
-                    &market_key.keys.event_q,
+                let mut queue_accounts = rpc_client.get_multiple_accounts_with_commitment(
+                    &[market_key.keys.event_q, market_key.keys.req_q],
                     CommitmentConfig::processed(),
                 )?;
-                let event_q_slot = event_q_value_and_context.context.slot;
+                if queue_accounts.value.len() != 2 {
+                    return Err(anyhow!("failed to find correct number of queue accounts"));
+                }
+                let event_q_slot = queue_accounts.context.slot;
                 {
                     if let Ok(max_height) = slot_height_map.try_read() {
                         if let Some(height) = max_height.get(&market_key.keys.market.to_string()) {
@@ -79,7 +82,7 @@ impl Crank {
                         return Ok(None);
                     }
                 }
-                let event_q_data = match event_q_value_and_context.value {
+                let event_q_data = match std::mem::take(&mut queue_accounts.value[0]) {
                     Some(event_q) => event_q.data,
                     None => {
                         return Err(anyhow!(
@@ -88,29 +91,14 @@ impl Crank {
                         ));
                     }
                 };
-                let req_q_data = rpc_client.get_account_with_commitment(
-                    &market_key.keys.req_q,
-                    CommitmentConfig::processed(),
-                );
-                let req_q_data = {
-                    match req_q_data {
-                        Ok(req_q_data) => match req_q_data.value {
-                            Some(acct) => acct.data,
-                            None => {
-                                return Err(anyhow!(
-                                    "failed to retrieve market {} request q",
-                                    market_key.keys.market
-                                ));
-                            }
-                        },
-                        Err(err) => {
-                            return Err(anyhow!(
-                                "failed to retrieve market {} request q {:#?}",
-                                market_key.keys.market,
-                                err
-                            ));
-                        }
-                    }
+                let req_q_data = match std::mem::take(&mut queue_accounts.value[1]) {
+                    Some(req_q_data) => req_q_data.data,
+                    None => {
+                        return Err(anyhow!(
+                            "{} request q value and context is none, skipping....",
+                            market_key.keys.market
+                        ));
+                    }   
                 };
                 let inner: Cow<[u64]> = remove_dex_account_padding(&event_q_data)?;
                 let (_header, seg0, seg1) = parse_event_queue(&inner)?;
@@ -196,7 +184,7 @@ impl Crank {
                             match ixs {
                                 Ok(ixs) => match ixs {
                                     Some(ixs) => {
-                                        let res = q.push((ixs, *market_key.keys.market.clone().deref()));
+                                        let res = q.push((ixs, market_key.keys.market));
                                         if res.is_err() {
                                             error!("failed to push instruction set onto stack for market {}: {:#?}", market_key.keys.market, res.err());
                                         }
@@ -221,8 +209,10 @@ impl Crank {
                     info!("waiting for spawned threads to finish");
                     wg.wait();
                     info!("collecting instructions");
-                    let mut instructions = vec![];
-                    let mut instructions_markets = vec![];
+                    // average number of markets per tx seems to be 2
+                    // which translates to 4 instructions
+                    let mut instructions = Vec::with_capacity(4);
+                    let mut instructions_markets = Vec::with_capacity(2);
                     loop {
                         let ix_set = q.pop();
                         if ix_set.is_none() {
@@ -290,24 +280,25 @@ impl Crank {
                             } else {
                                 warn!("no markets needed cranking");
                             }
-                            let slot_number = rpc_client.get_slot();
-                            match slot_number {
-                                Ok(slot_number) => match slot_height_map.try_write() {
-                                    Ok(mut height_writer) => {
-                                        for market in instructions_markets.iter() {
-                                            height_writer.insert(market.to_string(), slot_number);
-                                        }
+                        }
+                        // update slot number for any markets included in this crank
+                        let slot_number = rpc_client.get_slot();
+                        match slot_number {
+                            Ok(slot_number) => match slot_height_map.try_write() {
+                                Ok(mut height_writer) => {
+                                    for market in instructions_markets.iter() {
+                                        height_writer.insert(market.to_string(), slot_number);
                                     }
-                                    Err(err) => {
-                                        error!(
-                                            "failed to claim lock on slot height map {:#?}",
-                                            err
-                                        );
-                                    }
-                                },
-                                Err(err) => {
-                                    error!("failed to retrieve slot number {:#?}", err);
                                 }
+                                Err(err) => {
+                                    error!(
+                                        "failed to claim lock on slot height map {:#?}",
+                                        err
+                                    );
+                                }
+                            },
+                            Err(err) => {
+                                error!("failed to retrieve slot number {:#?}", err);
                             }
                         }
                     }
@@ -371,26 +362,26 @@ pub fn get_keys_for_market<'a>(
         market.as_ref()
     );
     Ok(MarketPubkeys {
-        market: Box::new(*market),
-        req_q: Box::new(Pubkey::new(transmute_one_to_bytes(&identity(
+        market: *market,
+        req_q: Pubkey::new(transmute_one_to_bytes(&identity(
             market_state.req_q,
-        )))),
-        event_q: Box::new(Pubkey::new(transmute_one_to_bytes(&identity(
+        ))),
+        event_q: Pubkey::new(transmute_one_to_bytes(&identity(
             market_state.event_q,
-        )))),
-        bids: Box::new(Pubkey::new(transmute_one_to_bytes(&identity(
+        ))),
+        bids: Pubkey::new(transmute_one_to_bytes(&identity(
             market_state.bids,
-        )))),
-        asks: Box::new(Pubkey::new(transmute_one_to_bytes(&identity(
+        ))),
+        asks: Pubkey::new(transmute_one_to_bytes(&identity(
             market_state.asks,
-        )))),
-        coin_vault: Box::new(Pubkey::new(transmute_one_to_bytes(&identity(
+        ))),
+        coin_vault: Pubkey::new(transmute_one_to_bytes(&identity(
             market_state.coin_vault,
-        )))),
-        pc_vault: Box::new(Pubkey::new(transmute_one_to_bytes(&identity(
+        ))),
+        pc_vault: Pubkey::new(transmute_one_to_bytes(&identity(
             market_state.pc_vault,
-        )))),
-        vault_signer_key: Box::new(vault_signer_key),
+        ))),
+        vault_signer_key: vault_signer_key,
     })
 }
 
@@ -441,12 +432,12 @@ fn hash_accounts(val: &[u64; 4]) -> u64 {
 
 #[derive(Clone, Default, Debug, PartialEq)]
 pub struct MarketPubkeys {
-    pub market: Box<Pubkey>,
-    pub req_q: Box<Pubkey>,
-    pub event_q: Box<Pubkey>,
-    pub bids: Box<Pubkey>,
-    pub asks: Box<Pubkey>,
-    pub coin_vault: Box<Pubkey>,
-    pub pc_vault: Box<Pubkey>,
-    pub vault_signer_key: Box<Pubkey>,
+    pub market: Pubkey,
+    pub req_q: Pubkey,
+    pub event_q: Pubkey,
+    pub bids: Pubkey,
+    pub asks: Pubkey,
+    pub coin_vault: Pubkey,
+    pub pc_vault: Pubkey,
+    pub vault_signer_key: Pubkey,
 }
