@@ -1,4 +1,4 @@
-#![deny(safe_packed_borrows)]
+#![deny(unaligned_references)]
 #![allow(dead_code)]
 
 use std::borrow::Cow;
@@ -6,14 +6,14 @@ use std::cmp::{max, min};
 use std::collections::BTreeSet;
 use std::convert::identity;
 use std::mem::size_of;
-use std::num::NonZeroU64;
+
 use std::sync::{Arc, Mutex};
 use std::{thread, time};
 
 use anyhow::{format_err, Result};
 use clap::Clap;
 use debug_print::debug_println;
-use enumflags2::BitFlags;
+
 use log::{error, info};
 use rand::rngs::OsRng;
 use safe_transmute::{
@@ -37,15 +37,15 @@ use spl_token::instruction as token_instruction;
 use warp::Filter;
 
 use serum_common::client::rpc::{
-    create_and_init_mint, create_token_account, mint_to_new_account, send_txn, simulate_transaction,
+    send_txn, simulate_transaction,
 };
-use serum_common::client::Cluster;
+
 use serum_dex::instruction::{
     cancel_order_by_client_order_id as cancel_order_by_client_order_id_ix,
     close_open_orders as close_open_orders_ix, init_open_orders as init_open_orders_ix,
-    MarketInstruction, NewOrderInstructionV3, SelfTradeBehavior,
+    MarketInstruction, NewOrderInstructionV3,
 };
-use serum_dex::matching::{OrderType, Side};
+
 use serum_dex::state::gen_vault_signer_key;
 use serum_dex::state::Event;
 use serum_dex::state::EventQueueHeader;
@@ -515,7 +515,7 @@ fn consume_events_once(
     account_metas: Vec<AccountMeta>,
     to_consume: usize,
     _thread_number: usize,
-    event_q: Pubkey,
+    _event_q: Pubkey,
 ) -> Result<Signature> {
     let _start = std::time::Instant::now();
     let instruction_data: Vec<u8> = MarketInstruction::ConsumeEvents(to_consume as u16).pack();
