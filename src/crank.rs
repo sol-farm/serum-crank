@@ -46,9 +46,11 @@ impl Crank {
         let rpc_client = Arc::new(RpcClient::new(self.config.http_rpc_url.clone()));
         let payer = Arc::new(self.config.payer());
         let dex_program = Pubkey::from_str(self.config.crank.dex_program.as_str()).unwrap();
-        let market_keys = self.config.crank.market_keys(&rpc_client, dex_program)?;
+        let market_keys = Arc::new(self.config.crank.market_keys(&rpc_client, dex_program)?);
         let slot_height_map: Arc<RwLock<HashMap<String, u64>>> =
             Arc::new(RwLock::new(HashMap::new()));
+        let q: Arc<ArrayQueue<(Vec<Instruction>, Pubkey)>> =
+            Arc::new(ArrayQueue::new(market_keys.len()));
         loop {
             select! {
                 recv(exit_chan) -> _msg => {
@@ -169,15 +171,12 @@ impl Crank {
             };
             info!("starting crank run");
             {
-                let market_keys = market_keys.clone();
+                //let market_keys = market_keys.clone();
                 let res = crossbeam::thread::scope(|s| {
-                    let q: Arc<ArrayQueue<(Vec<Instruction>, Pubkey)>> =
-                        Arc::new(ArrayQueue::new(market_keys.len()));
                     let wg = WaitGroup::new();
                     for market_key in market_keys.iter() {
                         let wg = wg.clone();
                         let q = Arc::clone(&q);
-                        let market_key = market_key.clone();
                         s.spawn(move |_| {
                             let ixs = work_loop(&market_key);
                             match ixs {
@@ -307,6 +306,13 @@ impl Crank {
             std::thread::sleep(std::time::Duration::from_secs(
                 self.config.crank.max_wait_for_events_delay,
             ));
+            // clear the array queue in between runs 
+            loop {
+                match q.pop() {
+                    Some(_) => continue,
+                    None => break,
+                }
+            }
         }
     }
 }
