@@ -222,7 +222,7 @@ impl Crank {
                     if instructions.len() > 0 {
                         info!(
                             "found instructions for {} markets: {:#?}",
-                            instructions.len() / 2,
+                            instructions.len(),
                             instructions_markets
                         );
                         let run_loop = |instructions: &Vec<Instruction>| -> Result<Signature> {
