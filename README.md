@@ -104,6 +104,22 @@ crank:
   max_markets_per_tx: 6
 ```
 
+# Log Analysis
+
+To enable quick analysis of the serum crank log file, `scripts/check_logs.sh` can be used to dump the logs of the running crank docker container, which will show a warning if any errors were detected. When no errors have been detected the output looks similar to:
+
+```
+$ ./check_logs.sh 
+found records of 320 cranks, with highest markets in tx 5
+5 most recent crank transactions
+2s6Uxd....bfB9TkPKeV
+4trQ1n....DRaMZ3hcDS
+5A3RT2....MRcVRCSyK4
+23jksg....rdLSVPQ2pd
+3U4jTe....kMuQgZKMvW
+
+```
+
 # License
 
 Based on code from Serum, so for their [click here](https://github.com/project-serum/serum-dex/blob/master/LICENSE)
