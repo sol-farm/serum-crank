@@ -48,7 +48,7 @@ impl Crank {
         let dex_program = Pubkey::from_str(self.config.crank.dex_program.as_str()).unwrap();
         let market_keys = Arc::new(self.config.crank.market_keys(&rpc_client, dex_program)?);
         let slot_height_map: Arc<RwLock<HashMap<String, u64>>> =
-            Arc::new(RwLock::new(HashMap::new()));
+            Arc::new(RwLock::new(HashMap::with_capacity(market_keys.len())));
         let q: Arc<ArrayQueue<(Vec<Instruction>, Pubkey)>> =
             Arc::new(ArrayQueue::new(market_keys.len()));
         loop {
@@ -138,12 +138,13 @@ impl Crank {
                     market_key.pc_wallet
                 );
                 info!(
-                    "First 5 accounts: {:?}",
+                    "First {} accounts: {:?}",
+                    self.config.crank.num_accounts,
                     orders_accounts
                         .iter()
-                        .take(5)
+                        .take(self.config.crank.num_accounts)
                         .map(hash_accounts)
-                        .collect::<Vec::<_>>()
+                        .collect::<Vec::<_>>(),
                 );
 
                 let mut account_metas = Vec::with_capacity(orders_accounts.len() + 4);
@@ -161,17 +162,15 @@ impl Crank {
                 {
                     account_metas.push(AccountMeta::new(**pubkey, false));
                 }
-                let instructions = consume_events_ix(
+                let instructions = vec![consume_events_ix(
                     &dex_program,
-                    &payer,
                     account_metas,
                     self.config.crank.events_per_worker,
-                )?;
+                )];
                 Ok(Some(instructions))
             };
             info!("starting crank run");
             {
-                //let market_keys = market_keys.clone();
                 let res = crossbeam::thread::scope(|s| {
                     let wg = WaitGroup::new();
                     for market_key in market_keys.iter() {
@@ -208,8 +207,8 @@ impl Crank {
                     wg.wait();
                     info!("collecting instructions");
                     // average number of markets per tx seems to be 2
-                    // which translates to 4 instructions
-                    let mut instructions = Vec::with_capacity(4);
+                    // which translates to 2 instructions
+                    let mut instructions = Vec::with_capacity(2);
                     let mut instructions_markets = Vec::with_capacity(2);
                     loop {
                         let ix_set = q.pop();
@@ -244,25 +243,48 @@ impl Crank {
                             )?;
                             Ok(signature)
                         };
-                        if instructions_markets.len() > 6 {
-                            // 6 is theoretically the maximum cranks we can fit into one transactions
-                            // so split it up
-                            let instructions_chunks = instructions.chunks(instructions.len() / 2);
+                        if instructions_markets.len() > self.config.crank.max_markets_per_tx {
+                            let instructions_chunks = instructions.chunks_mut(self.config.crank.max_markets_per_tx);
                             info!("starting chunked crank instruction processing");
-                            for (_idx, chunk) in instructions_chunks.enumerate() {
-                                let res = run_loop(&chunk.to_vec());
+                            for (_idx, mut chunk) in instructions_chunks.enumerate() {
+                                let chunk = std::mem::take(&mut chunk);
+                                // pre-allocate the vector to size of chunks + 1 to include the
+                                // random transfer instruction
+                                let mut ixs = Vec::with_capacity(chunk.len() + 1);
+                                for i in  0..chunk.len() {
+                                    // replace the value in chunk with an empty instruction
+                                    // pushing the instruction that was replaced into the vec
+                                    ixs.push(std::mem::replace(&mut chunk[i], Instruction{
+                                        program_id: Pubkey::default(),
+                                        accounts: vec![],
+                                        data: vec![],
+                                    }));
+                                }
+                                // add the random transfer instruction
+                                ixs.push(solana_sdk::system_instruction::transfer(
+                                    &payer.pubkey(),
+                                    &payer.pubkey(),
+                                    rand::random::<u64>() % 10000 + 1,                                    
+                                ));
+                                let res = run_loop(&ixs);
                                 if res.is_err() {
                                     error!(
                                         "failed to send chunked crank instruction {:#?}",
                                         res.err()
                                     );
                                 } else {
-                                    info!("processed chunked instruction {}", res.unwrap(),);
+                                    info!("processed chunked instruction {} size {}", res.unwrap(), ixs.len());
                                 }
                             }
                             info!("finished chunked crank instruction processing")
                         } else {
                             if instructions_markets.len() > 0 {
+                                // add the random transfer instruction
+                                instructions.push(solana_sdk::system_instruction::transfer(
+                                    &payer.pubkey(),
+                                    &payer.pubkey(),
+                                    rand::random::<u64>() % 10000 + 1,                                    
+                                ));
                                 let res = run_loop(&instructions);
                                 if res.is_err() {
                                     error!("failed to send crank instructions {:#?}", res.err());
@@ -317,24 +339,19 @@ impl Crank {
     }
 }
 
+// todo(bonedaddy): remove the returned vector and just return the single instruction
 fn consume_events_ix(
     program_id: &Pubkey,
-    payer: &Keypair,
     account_metas: Vec<AccountMeta>,
     to_consume: usize,
-) -> Result<Vec<Instruction>> {
+) -> Instruction {
     let instruction_data: Vec<u8> = MarketInstruction::ConsumeEvents(to_consume as u16).pack();
     let instruction = Instruction {
         program_id: *program_id,
         accounts: account_metas,
         data: instruction_data,
     };
-    let random_instruction = solana_sdk::system_instruction::transfer(
-        &payer.pubkey(),
-        &payer.pubkey(),
-        rand::random::<u64>() % 10000 + 1,
-    );
-    Ok(vec![instruction, random_instruction])
+    instruction
 }
 
 #[cfg(target_endian = "little")]
