@@ -117,8 +117,19 @@ found records of 320 cranks, with highest markets in tx 5
 5A3RT2....MRcVRCSyK4
 23jksg....rdLSVPQ2pd
 3U4jTe....kMuQgZKMvW
-
 ```
+
+# Results
+
+With the following configuration  the highest amount of markets cranked in a single transaction so far has been 7.
+
+```yaml
+max_wait_for_events_delay: 60
+num_accounts: 5
+events_per_worker: 5
+max_markets_per_tx: 9
+```
+
 
 # License
 
