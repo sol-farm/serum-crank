@@ -6,3 +6,7 @@ serum_crank.tar.gz
 payer.json
 
 my-crank.log
+
+./crank
+./serum_crank.tar
+crank

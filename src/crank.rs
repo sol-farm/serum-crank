@@ -105,8 +105,8 @@ impl Crank {
                 let event_q_len = seg0.len() + seg1.len();
                 let req_q_len = req_seg0.len() + req_seg1.len();
                 info!(
-                    "Size of request queue is {}, market {}, coin {}, pc {}",
-                    req_q_len, market_key.keys.market, market_key.coin_wallet, market_key.pc_wallet
+                    "event q len {}, req q len {}, market {}, coin {}, pc {}",
+                    event_q_len, req_q_len, market_key.keys.market, market_key.coin_wallet, market_key.pc_wallet
                 );
                 if event_q_len == 0 {
                     return Ok(None);
