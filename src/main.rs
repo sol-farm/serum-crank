@@ -66,7 +66,7 @@ async fn process_matches<'a>(
             let wg = WaitGroup::new();
             {
                 let wg = wg.clone();
-                tokio::task::spawn(async move {
+                tokio::task::spawn_blocking(move || {
                     let crank_turner = crank::Crank::new(cfg);
                     let res = crank_turner.start(r);
                     if res.is_err() {
