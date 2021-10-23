@@ -123,9 +123,11 @@ impl Crank {
                 for account in accounts {
                     used_accounts.insert(account);
                     if used_accounts.len() >= self.config.crank.num_accounts {
+                        warn!("found too many accounts for market {}, skipping remaining...", market_key.keys.market);
                         break;
                     }
                 }
+                // todo(bonedaddy): verify this works
                 let orders_accounts: Vec<_> = used_accounts.into_iter().collect();
                 info!(
                     "Number of unique order accounts: {}, market {}, coin {}, pc {}",
@@ -170,6 +172,7 @@ impl Crank {
             {
                 let res = crossbeam::thread::scope(|s| {
                     let wg = WaitGroup::new();
+                    // spawn a locally scoped thread to process each market in parallel
                     for market_key in market_keys.iter() {
                         let wg = wg.clone();
                         let q = Arc::clone(&q);
@@ -200,13 +203,14 @@ impl Crank {
                             drop(wg);
                         });
                     }
+                    // wait for market processing threads to finish, collecting 
                     info!("waiting for spawned threads to finish");
                     wg.wait();
                     info!("collecting instructions");
-                    // average number of markets per tx seems to be 2
-                    // which translates to 2 instructions
-                    let mut instructions = Vec::with_capacity(2);
-                    let mut instructions_markets = Vec::with_capacity(2);
+                    let mut instructions = vec![];
+                    let mut instructions_markets = vec![];
+                    // loop, popping instructions off the queue
+                    // until we have no more instructions to process
                     loop {
                         let ix_set = q.pop();
                         if ix_set.is_none() {
@@ -218,8 +222,9 @@ impl Crank {
                     }
                     if instructions.len() > 0 {
                         info!(
-                            "found instructions for {} markets: {:#?}",
+                            "found {} instructions for {} markets: {:#?}",
                             instructions.len(),
+                            instructions_markets.len(),
                             instructions_markets
                         );
                         let run_loop = |instructions: &Vec<Instruction>| -> Result<Signature> {
@@ -241,22 +246,19 @@ impl Crank {
                             Ok(signature)
                         };
                         if instructions_markets.len() > self.config.crank.max_markets_per_tx {
-                            let instructions_chunks = instructions.chunks_mut(self.config.crank.max_markets_per_tx);
+                            warn!(
+                                "number of market instructions {} greater than max markets per tx {}, processing in chunks",
+                                instructions_markets.len(), self.config.crank.max_markets_per_tx
+                            );
+                            let instructions_chunks = instructions.chunks(self.config.crank.max_markets_per_tx);
+                            let num_chunks = instructions_chunks.len();
                             info!("starting chunked crank instruction processing");
-                            for (_idx, mut chunk) in instructions_chunks.enumerate() {
-                                let chunk = std::mem::take(&mut chunk);
+                            for (idx, chunk) in instructions_chunks.enumerate() {
                                 // pre-allocate the vector to size of chunks + 1 to include the
                                 // random transfer instruction
                                 let mut ixs = Vec::with_capacity(chunk.len() + 1);
-                                for i in  0..chunk.len() {
-                                    // replace the value in chunk with an empty instruction
-                                    // pushing the instruction that was replaced into the vec
-                                    ixs.push(std::mem::replace(&mut chunk[i], Instruction{
-                                        program_id: Pubkey::default(),
-                                        accounts: vec![],
-                                        data: vec![],
-                                    }));
-                                }
+                                // extend instruction slice by cloning instructions in this chunk
+                                ixs.extend_from_slice(chunk);
                                 // add the random transfer instruction
                                 ixs.push(solana_sdk::system_instruction::transfer(
                                     &payer.pubkey(),
@@ -266,11 +268,13 @@ impl Crank {
                                 let res = run_loop(&ixs);
                                 if res.is_err() {
                                     error!(
-                                        "failed to send chunked crank instruction {:#?}",
-                                        res.err()
+                                        "failed to process chunk instruction index {} of {}: {:#?}",
+                                        idx + 1,
+                                        num_chunks,
+                                        res.err().unwrap()
                                     );
                                 } else {
-                                    info!("processed chunked instruction {} size {}", res.unwrap(), ixs.len());
+                                    info!("processed chunk instruction index {} of {}: {}", idx + 1, num_chunks, res.unwrap());
                                 }
                             }
                             info!("finished chunked crank instruction processing")
@@ -305,11 +309,7 @@ impl Crank {
                                     for market in instructions_markets.iter() {
                                         slot_height_map.insert(market.to_string(), slot_number);
                                     }
-                                }
-                                Err(err) => {
-                                    error!("failed to claim lock on slot height map {:#?}", err);
-                                }
-                            ,
+                            },
                             Err(err) => {
                                 error!("failed to retrieve slot number {:#?}", err);
                             }
