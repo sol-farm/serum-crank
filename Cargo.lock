@@ -472,6 +472,7 @@ dependencies = [
  "crossbeam-channel 0.5.1",
  "crossbeam-queue 0.3.2",
  "crossbeam-utils 0.8.5",
+ "dashmap",
  "enumflags2",
  "jemallocator",
  "log",

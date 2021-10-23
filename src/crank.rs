@@ -3,6 +3,7 @@ use anyhow::{anyhow, format_err, Result};
 use crossbeam::{select, sync::WaitGroup};
 use crossbeam_channel::Receiver;
 use crossbeam_queue::ArrayQueue;
+use dashmap::DashMap;
 use log::{error, info, warn};
 use safe_transmute::{
     guard::SingleManyGuard,
@@ -47,8 +48,7 @@ impl Crank {
         let payer = Arc::new(self.config.payer());
         let dex_program = Pubkey::from_str(self.config.crank.dex_program.as_str()).unwrap();
         let market_keys = Arc::new(self.config.crank.market_keys(&rpc_client, dex_program)?);
-        let slot_height_map: Arc<RwLock<HashMap<String, u64>>> =
-            Arc::new(RwLock::new(HashMap::with_capacity(market_keys.len())));
+        let slot_height_map = DashMap::new();
         let q: Arc<ArrayQueue<(Vec<Instruction>, Pubkey)>> =
             Arc::new(ArrayQueue::new(market_keys.len()));
         loop {
@@ -69,18 +69,15 @@ impl Crank {
                 }
                 let event_q_slot = queue_accounts.context.slot;
                 {
-                    if let Ok(max_height) = slot_height_map.try_read() {
-                        if let Some(height) = max_height.get(&market_key.keys.market.to_string()) {
-                            if event_q_slot <= *height {
-                                info!(
-                                    "Skipping crank. Already cranked for slot. Event queue slot: {}, Max seen slot: {}",
-                                    event_q_slot, height
-                                );
-                                return Ok(None);
-                            }
+                    if let Some(height) = slot_height_map.get(&market_key.keys.market.to_string()) {
+                        let height = *height;
+                        if event_q_slot <= height {
+                            info!(
+                                "Skipping crank. Already cranked for slot. Event queue slot: {}, Max seen slot: {}",
+                                event_q_slot, height
+                            );
+                            return Ok(None);
                         }
-                    } else {
-                        return Ok(None);
                     }
                 }
                 let event_q_data = match std::mem::take(&mut queue_accounts.value[0]) {
@@ -304,16 +301,15 @@ impl Crank {
                         // update slot number for any markets included in this crank
                         let slot_number = rpc_client.get_slot();
                         match slot_number {
-                            Ok(slot_number) => match slot_height_map.try_write() {
-                                Ok(mut height_writer) => {
+                            Ok(slot_number) => {
                                     for market in instructions_markets.iter() {
-                                        height_writer.insert(market.to_string(), slot_number);
+                                        slot_height_map.insert(market.to_string(), slot_number);
                                     }
                                 }
                                 Err(err) => {
                                     error!("failed to claim lock on slot height map {:#?}", err);
                                 }
-                            },
+                            ,
                             Err(err) => {
                                 error!("failed to retrieve slot number {:#?}", err);
                             }
